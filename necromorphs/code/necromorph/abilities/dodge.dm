@@ -28,7 +28,7 @@
 		step_towards(owner, target, movement_delay)
 		owner.set_dir_on_move = TRUE
 		//Randomly selected sound
-		var/sound_type = pickweight(list(SOUND_SPEECH = 6, SOUND_ATTACK  = 2, SOUND_PAIN = 1.5, SOUND_SHOUT = 1))
+		var/sound_type = pick_weight(list(SOUND_SPEECH = 6, SOUND_ATTACK  = 2, SOUND_PAIN = 1.5, SOUND_SHOUT = 1))
 		owner.play_species_audio(owner, sound_type, VOLUME_QUIET, 1, -1)
 	else
 		owner.balloon_alert(owner, "Couldn't find valid dodge location!")

@@ -121,10 +121,10 @@
 	winddown()
 	//We play a sound!
 	var/sound_file = pick(list(
-	'modular_skyrat/modules/necromorphs/sound/effects/impacts/hard_impact_1.ogg',
-	'modular_skyrat/modules/necromorphs/sound/effects/impacts/hard_impact_2.ogg',
-	'modular_skyrat/modules/necromorphs/sound/effects/impacts/low_impact_1.ogg',
-	'modular_skyrat/modules/necromorphs/sound/effects/impacts/low_impact_2.ogg'))
+	'necromorphs/sound/effects/impacts/hard_impact_1.ogg',
+	'necromorphs/sound/effects/impacts/hard_impact_2.ogg',
+	'necromorphs/sound/effects/impacts/low_impact_1.ogg',
+	'necromorphs/sound/effects/impacts/low_impact_2.ogg'))
 	playsound(owner, sound_file, VOLUME_MID, TRUE)
 
 	//The leap impact deals two burst of damage.

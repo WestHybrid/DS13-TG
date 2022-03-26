@@ -170,4 +170,6 @@ h1.alert, h2.alert		{color: #000000;}
 
 .monkeyhive				{color: #774704;}
 .monkeylead				{color: #774704;	font-size: 2;}
+
+.execution				{color: #CC0033; font-weight: bold; font-size: 14px; font-family: "Cambria";}
 </style>"}

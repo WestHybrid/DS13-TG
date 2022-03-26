@@ -27,7 +27,7 @@ SUBSYSTEM_DEF(necromorph)
 	var/marker_activated_at = 0	//World time when the marker was activated
 
 	//Players
-	var/list/necromorph_players = list()	//This is a list of keys and mobs of players on the necromorph team
+	var/list/necromorph_players = list()	//This is a list of mobs of players on the necromorph team
 
 	//Sightings of prey. See  code/modules/necromorph/corruption/eye.dm
 	var/list/sightings = list()
