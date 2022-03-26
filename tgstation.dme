@@ -4348,4 +4348,12 @@
 #include "interface\menu.dm"
 #include "interface\stylesheet.dm"
 #include "interface\skin.dmf"
+#include "necromorphs\code\__HELPERS\angles.dm"
+#include "necromorphs\code\__HELPERS\vectors.dm"
+#include "necromorphs\lib\hypot\Hypot.dm"
+#include "necromorphs\lib\vector2\CommonVectors.dm"
+#include "necromorphs\lib\vector2\Vector2.dm"
+#include "necromorphs\lib\vector2\Vector2Matrix.dm"
+#include "necromorphs\lib\vector2\vectorpool.dm"
+#include "necromorphs\lib\viewporttoworldpoint\ViewportToWorldPoint.dm"
 // END_INCLUDE

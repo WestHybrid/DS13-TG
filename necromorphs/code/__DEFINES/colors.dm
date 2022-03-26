@@ -1,0 +1,33 @@
+// BYOND lower-cases color values, and thus we do so as well to ensure atom.color == COLOR_X will work correctly
+#define COLOR_NAVY_BLUE        "#000080"
+#define COLOR_DARK_GRAY        "#404040"
+#define COLOR_BROWN_ORANGE     "#824b28"
+#define COLOR_GRAY40           "#666666"
+#define COLOR_SEDONA           "#cc6600"
+#define COLOR_DEEP_SKY_BLUE    "#00e1ff"
+#define COLOR_SUN              "#ec8b2f"
+#define COLOR_LUMINOL          "#66ffff"
+#define COLOR_GRAY80           "#cccccc"
+#define COLOR_OFF_WHITE        "#eeeeee"
+#define COLOR_NT_RED           "#9d2300"
+#define COLOR_GUNMETAL         "#545c68"
+#define COLOR_MUZZLE_FLASH     "#ffffb2"
+#define COLOR_CHESTNUT         "#996633"
+#define COLOR_BEASTY_BROWN     "#663300"
+#define COLOR_WHEAT            "#ffff99"
+#define COLOR_CYAN_BLUE        "#3366cc"
+#define COLOR_LIGHT_CYAN       "#66ccff"
+#define COLOR_PAKISTAN_GREEN   "#006600"
+#define COLOR_HULL             "#436b8e"
+#define COLOR_AMBER            "#ffbf00"
+#define COLOR_COMMAND_BLUE     "#46698c"
+#define COLOR_SKY_BLUE         "#5ca1cc"
+#define COLOR_CIVIE_GREEN      "#b7f27d"
+#define COLOR_TITANIUM         "#d1e6e3"
+#define COLOR_DARK_GUNMETAL    "#4c535b"
+#define COLOR_GOLD             "#d4af37"
+
+#define COLOR_BLOOD_NECRO      "#583001"
+
+
+
