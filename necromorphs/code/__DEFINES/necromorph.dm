@@ -15,7 +15,6 @@
 #define COLOR_NECRO_DARK_YELLOW		"#AAAA00"
 #define COLOR_MARKER_RED		"#FF4444"
 #define COLOR_HARVESTER_RED		rgb(255,68,68,128)
-#define COLOR_BIOMASS_GREEN		"#82bf26"
 #define COLOR_BIOLUMINESCENT_ORANGE "#ffb347"
 
 
@@ -70,13 +69,6 @@
 
 //Items in vendors are worth this* their usual biomass, to make them last longer as sources
 #define VENDOR_BIOMASS_MULT	5
-
-//One unit (10ml) of purified liquid biomass can be multiplied by this value to create one kilogram of solid biomass
-#define REAGENT_TO_BIOMASS	0.01
-
-#define BIOMASS_TO_REAGENT	100
-
-
 
 //#define PLACEMENT_FLOOR	"floor"
 //#define PLACEMENT_WALL	"wall"
