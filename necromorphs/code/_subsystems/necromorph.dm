@@ -20,7 +20,7 @@ SUBSYSTEM_DEF(necromorph)
 	var/list/necroqueue = list()	//This is a list of signal players who are waiting to be put into the first available major vessel
 
 	//Marker
-	var/obj/machinery/marker/marker
+	var/mob/living/silicon/marker/marker
 
 	var/list/marker_spawns_ishimura = list()	//Possible spawn locations aboard ishimura
 	var/list/marker_spawns_aegis = list()	//Possible spawn locations on Aegis VII
@@ -120,23 +120,23 @@ SUBSYSTEM_DEF(necromorph)
 */
 
 
-/proc/add_massive_atom(var/atom/A)
+/proc/add_massive_atom(atom/A)
 	if ((A in SSnecromorph.massive_necroatoms))
 		return
 
 	SSnecromorph.massive_necroatoms += A
-	var/obj/machinery/marker/M = get_marker()
+	var/mob/living/silicon/marker/M = get_marker()
 	if (M)
 		M.invested_biomass = NONSENSICAL_VALUE
 		M.unavailable_biomass = NONSENSICAL_VALUE
 
 
-/proc/remove_massive_atom(var/atom/A)
+/proc/remove_massive_atom(atom/A)
 	if (!(A in SSnecromorph.massive_necroatoms))
 		return
 
 	SSnecromorph.massive_necroatoms -= A
-	var/obj/machinery/marker/M = get_marker()
+	var/mob/living/silicon/marker/M = get_marker()
 	if (M)
 		M.invested_biomass = NONSENSICAL_VALUE
 		M.unavailable_biomass = NONSENSICAL_VALUE
