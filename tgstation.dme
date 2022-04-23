@@ -4365,7 +4365,6 @@
 #include "necromorphs\code\__HELPERS\necromorphs.dm"
 #include "necromorphs\code\_subsystems\necromorph.dm"
 #include "necromorphs\code\BPL\_defines.dm"
-#include "necromorphs\code\BPL\asset.dm"
 #include "necromorphs\code\BPL\biomass_storage.dm"
 #include "necromorphs\code\BPL\bpl_organs.dm"
 #include "necromorphs\code\BPL\growth_tank.dm"

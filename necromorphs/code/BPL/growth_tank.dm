@@ -1,8 +1,3 @@
-/atom/movable
-	//Biomass is also measured in kilograms, its the organic mass in the atom. Is often zero
-	var/biomass = 0
-
-
 
 /*
 	The growth tank is where organs are created
@@ -10,292 +5,179 @@
 	Fetuses can be grown using only biomass
 	Limbs and organs require stem cells, which are harvested from fetuses (as well as more biomass)
 */
+
 /obj/machinery/growth_tank
 	name = "growth tank"
 	desc = "A vat for growing organic components."
-	icon = 'necromorphs/icons/obj/machines/ds13/bpl.dmi'
+	icon = 'necromorphs/icons/obj/machines/bpl.dmi'
 	icon_state = "base"
 	interaction_flags_atom = INTERACT_ATOM_ATTACK_HAND
-
 	density = TRUE
 	anchored = TRUE
 	drag_slowdown = 1.5
-
-	var/max_biomass = 150 //1.5 Litre
-	var/current_biomass = 0
-
-	var/growing_organ
-	var/organ_biomass = 0
-	var/target_biomass = 0
-	var/max_health = 0
-	var/decay_factor = 0
-	var/damage = 0
-	var/decaying = FALSE
-	var/idle = FALSE
-
+	move_resist = MOVE_RESIST_DEFAULT
+	/// Storage for our reagents holder in case we are on top of something
+	var/datum/reagents/temp_holder
+	/// The console we are connected to.
 	var/obj/machinery/computer/bpl/connected_console
-
-	var/growth_rate = 1.2 //This many units of refined biomass are added to the forming organ each tick
-
-	var/efficiency = 0.9 //Some of the biomass is wasted
-
-	//Two tanks can be stacked vertically
+	/// Two tanks can be stacked vertically.
 	var/obj/machinery/growth_tank/up
 	var/obj/machinery/growth_tank/below
+	/// The design we're printing currently.
+	var/datum/design/being_built
+	/// If we're currently printing something.
+	var/busy = FALSE
+	/// How efficient our machine is. Better parts = less chemicals used and less power used. Range of 1 to 0.25.
+	/// Lower is better.
+	var/production_coefficient = 1
+	/// How long it takes for us to print a limb. Affected by production_coefficient.
+	var/production_speed = 5 MINUTES
 
 /obj/machinery/growth_tank/Initialize()
+	create_reagents(100, OPENCONTAINER)
+	temp_holder = reagents
 	.=..()
-	create_reagents(max_biomass)
-	//If we find another tank in our turf, put ourselves ontop of it
-	for(var/obj/machinery/growth_tank/tank in loc)
-		if(tank != src && !tank.up && !tank.below)
-			pixel_y = 24
-			below = tank
-			drag_slowdown = 3
-			tank.drag_slowdown = 3
-			tank.up = src
-			tank.update_icon(UPDATE_ICON_STATE)
-			break
-	RegisterSignal(reagents, list(COMSIG_REAGENTS_ADD_REAGENT, COMSIG_REAGENTS_REM_REAGENT), .proc/reagent_change)
 
-/obj/machinery/growth_tank/MouseDrop_T(atom/A, mob/living/user)
-	if(!istype(user) || user.stat || !Adjacent(user) || !Adjacent(A) || !isliving(A) || up || below || !istype(A, /obj/machinery/growth_tank))
+/obj/machinery/growth_tank/LateInitialize()
+	.=..()
+	//If we find another tank in our turf, put it ontop of us
+	if(!below)
+		AddComponent(/datum/component/plumbing/simple_demand)
+		for(var/obj/machinery/growth_tank/tank in loc.contents-src)
+			if(put_tank_above(tank))
+				tank.anchored = TRUE
+				tank.reagents = reagents
+				break
+
+/obj/machinery/growth_tank/Destroy()
+	if(up)
+		up.below = null
+		up.pixel_y = 0
+	else if(below)
+		below.up = null
+		below.update_icon(UPDATE_ICON_STATE)
+	.=..()
+
+/obj/machinery/growth_tank/update_icon_state()
+	.=..()
+	icon_state = "base"
+	if(being_built)
+		icon_state = "[icon_state]_growing"
+	if(up)
+		icon_state = "[icon_state]_up"
+
+/obj/machinery/growth_tank/RefreshParts()
+	reagents.maximum_volume = 0
+	for(var/obj/item/reagent_containers/glass/our_beaker in component_parts)
+		reagents.maximum_volume += our_beaker.volume
+		our_beaker.reagents.trans_to(src, our_beaker.reagents.total_volume)
+	production_coefficient = 1.25
+	for(var/obj/item/stock_parts/manipulator/our_manipulator in component_parts)
+		production_coefficient -= our_manipulator.rating * 0.25
+	production_coefficient = clamp(production_coefficient, 0, 1)
+
+/obj/machinery/growth_tank/can_be_pulled(user, grab_state, force)
+	.=..()
+	if(up || below)
+		. = FALSE
+
+/obj/machinery/growth_tank/on_deconstruction()
+	for(var/obj/item/reagent_containers/glass/our_beaker in component_parts)
+		reagents.trans_to(our_beaker, our_beaker.reagents.maximum_volume)
+	.=..()
+
+/obj/machinery/growth_tank/MouseDrop(atom/over, src_location, over_location, src_control, over_control, params)
+	.=..()
+	if(!istype(usr) || usr.stat || !Adjacent(usr) || !usr.Adjacent(over) || up)
 		return
-	if(do_after(user, 3 SECONDS, A))
-		var/obj/machinery/growth_tank/tank = A
-		up = tank
-		drag_slowdown = 3
-		tank.below = src
-		tank.drag_slowdown = 3
+	if(istype(over, /obj/machinery/growth_tank))
+		var/obj/machinery/growth_tank/tank = over
+		if((!tank.below && !tank.up) && tank.anchored && do_after(usr, 3 SECONDS, src))
+			tank.put_tank_above(src)
+	else if(below && !anchored && do_after(usr, 3 SECONDS, src))
+		below.up = null
+		below.update_icon(UPDATE_ICON_STATE)
+		below.move_resist = MOVE_RESIST_DEFAULT
+		move_resist = MOVE_RESIST_DEFAULT
+		below = null
+		pixel_y = 0
+		forceMove(get_turf(over))
+		if(!length(GetComponents(/datum/component/plumbing/simple_demand)))
+			AddComponent(/datum/component/plumbing/simple_demand)
+
+/obj/machinery/growth_tank/proc/put_tank_above(obj/machinery/growth_tank/tank)
+	.=FALSE
+	if(istype(tank, /obj/machinery/growth_tank) || tank != src && !tank.up && !tank.below && !up && !below)
 		tank.pixel_y = 24
+		up = tank
+		tank.below = src
+		//Prevent any kind of pulling
+		move_resist = INFINITY
+		tank.move_resist = INFINITY
+		update_icon(UPDATE_ICON_STATE)
+		var/list/components = GetComponents(/datum/component/plumbing/simple_demand)
+		QDEL_LIST(components)
 		tank.forceMove(loc)
+		.=TRUE
 
-/obj/machinery/growth_tank/examine(mob/user)
-	.=..()
-	if(growing_organ)
-		if(!idle)
-			var/obj/item/organ/organ = GLOB.bpl_organs[growing_organ]
-			. += "It is currently growing [initial(organ.name)]"
-			var/growth_progress = growth_progress()
-			. += "Growth progress is [round(growth_progress*100,0.1)]%"
-			var/total_time = (target_biomass / (growth_rate * REAGENT_TO_BIOMASS)) * SSmachines.wait
-			var/remaining_time = total_time * (1 - growth_progress)
-			. += "Estimated time remaining is [time2text(remaining_time, "mm:ss")]"
-
-		var/biomass_percent = biomass / max_biomass
-		if(biomass_percent <= 0.6)
-			if(biomass_percent > 0.3)
-				. += span_warning("The yellow warning light indicates biomass is below 60% and should be replenished.")
-			else if(biomass_percent > 0)
-				. += span_warning("The orange warning light indicates biomass is below 30% and must be replenished urgently.")
-			else
-				//The blinking red light appears when biomass has completely run out. At this point, the contained atom takes damage until it starves to death
-				. += span_danger("The red warning light indicates there is no biomass remaining, the organ inside is starving to death and will lose viability soon.")
-		else
-			//If biomass is fine, then lets show some other lights
-			if(!idle)
-				//If the current growth thing is not done growing, then lets display a non-attention-grabbing still green light
-				. += "The green light indicates it is functioning normally, no action needed."
-			else
-				//Its finished growing, lets have a flashy light to attract attention
-				. += span_notice("The flashing green light indicates that growth is complete, the organ within is ready for harvesting or implantation")
+/obj/machinery/growth_tank/wrench_act(mob/living/user, obj/item/tool)
+	if(!up && default_unfasten_wrench(user, tool) == SUCCESSFUL_UNFASTEN)
+		.=TRUE
+	if(anchored && below)
+		//Lets share the same reagent storage to prevent plumbing fuckery
+		reagents = below.reagents
 	else
-		. += "The light is off, it is not currently operating."
+		reagents = temp_holder
+
+/obj/machinery/growth_tank/default_deconstruction_crowbar(obj/item/crowbar, ignore_panel, custom_deconstruct)
+	if(!up || !below)
+		.=..()
+
+/obj/machinery/growth_tank/on_deconstruction()
+	for(var/obj/item/reagent_containers/glass/our_beaker in component_parts)
+		reagents.trans_to(our_beaker, our_beaker.reagents.maximum_volume)
+	.=..()
 
 /obj/machinery/growth_tank/is_open_container()
 	return TRUE
 
-/obj/machinery/growth_tank/attack_hand(mob/living/carbon/human/user)
-	.=..()
-	if(.)
-		return
-	if(growing_organ && idle)
-		remove_product(user)
+/obj/machinery/growth_tank/proc/build_item(list/modified_consumed_reagents_list)
+	var/built_typepath = being_built.build_path
+	// If we have a bodypart, we need to initialize the limb on its own. Otherwise we can build it here.
+	if(ispath(built_typepath, /obj/item/bodypart))
+		build_limb(built_typepath)
+	else
+		new built_typepath(loc)
 
-/obj/machinery/growth_tank/process(delta_time)
-	//If we have no biomass we do nothing
-	if(!current_biomass || !growing_organ)
-		turn_off()
-		return
+	busy = FALSE
+	update_icon(UPDATE_ICON_STATE)
 
-	//If we're growing something, try to consume some biomass and add it to the growing attom
-	if(!idle && !decaying)
-		var/change = reagents.get_reagent_amount(BIOMASS_REAGENT_PATH)
-		change = clamp(growth_rate, 0, change)
-		reagents.remove_reagent(BIOMASS_REAGENT_PATH, change)
-
-		organ_biomass += change
-
-		update_icon(UPDATE_OVERLAYS)
-
-		if(growth_progress() >= 1.0)
-			finish_growing()
-	else if(decaying)
-		damage = min(max_health, damage + (decay_factor * delta_time * max_health))
-
-/obj/machinery/growth_tank/proc/reagent_change(datum/reagent/reagent, amount, reagtemp, data, no_react)
-	SIGNAL_HANDLER
-	if(istype(reagent, BIOMASS_REAGENT_PATH))
-		current_biomass += amount
-		if(current_biomass <= 0)
-			set_is_operational(FALSE)
-			if(growing_organ)
-				decaying = TRUE
+/obj/machinery/growth_tank/proc/build_limb(buildpath, building_category)
+	/// The limb we're making with our buildpath, so we can edit it.
+	var/obj/item/bodypart/limb = new buildpath(loc)
+	/// Species with greyscale limbs.
+	var/list/greyscale_species = list(SPECIES_HUMAN, SPECIES_LIZARD, SPECIES_ETHEREAL)
+	if(building_category in greyscale_species) //Species with greyscale parts should be included here
+		if(building_category == SPECIES_HUMAN) //humans don't use the full colour spectrum, they use random_skin_tone
+			limb.skin_tone = random_skin_tone()
 		else
-			set_is_operational(TRUE)
-			if(growing_organ)
-				decaying = FALSE
-		playsound(src, "bubble_small", VOLUME_MID)
-
-/obj/machinery/growth_tank/proc/turn_on()
-	if(!is_operational || !growing_organ || use_power > NO_POWER_USE)
-		return FALSE
-
-	if(!idle)
-		update_use_power(ACTIVE_POWER_USE)
+			limb.species_color = "#[random_color()]"
+		limb.icon = 'icons/mob/human_parts_greyscale.dmi'
+		limb.should_draw_greyscale = TRUE
 	else
-		update_use_power(IDLE_POWER_USE)
+		limb.icon = 'icons/mob/human_parts.dmi'
 
-	START_PROCESSING(SSmachines, src)
-
-	update_icon(UPDATE_OVERLAYS)
-	return TRUE
-
-/obj/machinery/growth_tank/proc/turn_off()
-	//We're already turned off
-	if(use_power == NO_POWER_USE || growing_organ)
-		return
-
-	STOP_PROCESSING(SSmachines, src)
-	update_use_power(NO_POWER_USE)
-
-	update_icon(UPDATE_OVERLAYS)
-
-/obj/machinery/growth_tank/proc/growth_progress()
-	if(!growing_organ)
-		return 0
-
-	if(!idle)
-		return (organ_biomass / target_biomass)
-	else
-		return 1
-/obj/machinery/growth_tank/update_icon_state()
-	.=..()
-	if(up)
-		icon_state = "base_up"
-	else
-		icon_state = "base"
-
-/obj/machinery/growth_tank/update_overlays()
-	.=..()
-	var/biomass_percent = current_biomass / max_biomass
-	var/liquid_color = BlendRGB("#e5ffb2", COLOR_BIOMASS_GREEN, biomass_percent)
-	var/mutable_appearance/appearance
-
-	if(growing_organ)
-		//TODO here: Atom for the thing growing in the tank
-		appearance = mutable_appearance(icon, growing_organ, alpha = 220)
-
-		//Partially grown things are smaller
-		if(!idle && growing_organ)
-			appearance.transform.Scale(max(0.3, organ_biomass / target_biomass))
-		appearance.transform.Turn(rand(-10, 10))	//Slight random rotation
-		appearance.pixel_x += rand(-3, 3)
-		appearance.pixel_y += rand(-3, 3)
-		. += appearance
-
-		//First of all, biomass warning lights
-		if(biomass_percent <= 0.6)
-			if(biomass_percent > 0.3)
-				. += "light_yellow"
-			else if(biomass_percent > 0)
-				. += "light_orange"
-			else
-				//The blinking red light appears when biomass has completely run out. At this point, the contained atom takes damage until it starves to death
-				.+="light_red"
-				playsound(src, 'necromorphs/sound/machines/tankdanger.ogg', VOLUME_MID)
-		else
-			//If biomass is fine, then lets show some other lights
-			if(growing_organ && !idle)
-				//If the current growth thing is not done growing, then lets display a non-attention-grabbing still green light
-				. += "light_green"
-			else
-				//Its finished growing, lets have a flashy light to attract attention
-				. += "light_green_flashing"
-	else
-		//Nothing currently growing, the light turns off
-		. += "light_off"
-
-	//The liquid becomes more sickly pale as biomass depletes
-	appearance = mutable_appearance(icon, "pod_liquid_grayscale")
-	appearance.color = liquid_color
-	. += appearance
-
-	appearance = mutable_appearance(icon, "gradient_grayscale", alpha = 190)
-	appearance.color = liquid_color
-	. += appearance
-
-	appearance = mutable_appearance(icon, pick("bubbles1", "bubbles2", "bubbles3"))
-	appearance.color = liquid_color
-	. += appearance
-
-	appearance = mutable_appearance(icon, "shine", alpha = 220)
-	appearance.color = liquid_color
-	. += appearance
-
-/obj/machinery/growth_tank/proc/remove_product(mob/living/carbon/human/user)
-	if(!growing_organ)
-		return
-
-	idle = FALSE
-	var/obj/item/organ/organ = new GLOB.bpl_organs[growing_organ]
-	organ.biomass = organ_biomass
-	organ.applyOrganDamage(damage)
-
-	target_biomass = initial(target_biomass)
-	organ_biomass = initial(organ_biomass)
-	damage = initial(damage)
-	max_health = initial(max_health)
-	growing_organ = initial(growing_organ)
-
-	if(user)
-		//organ.forceMove(user.loc)
-		user.put_in_hands(organ)
-	else
-		organ.forceMove(loc)
-
-	turn_off()
-
-/obj/machinery/growth_tank/proc/finish_growing()
-	idle = TRUE
-	playsound(src, 'necromorphs/sound/machines/tankconfirm.ogg', VOLUME_MID)
-	update_icon(UPDATE_OVERLAYS)
-
-/obj/machinery/growth_tank/proc/dump_organ()
-	if(!idle)
-		var/obj/item/organ/forming/organ = new /obj/item/organ/forming
-		var/obj/item/organ/organ_type = GLOB.bpl_organs[growing_organ]
-		organ.organ_flags &= ORGAN_FROZEN
-		organ.name = initial(organ_type.name)
-		organ.icon = initial(organ_type.icon)
-		organ.icon_state = initial(organ_type.icon_state)
-		organ.biomass = organ_biomass
-		organ.applyOrganDamage(damage)
-
-		target_biomass = initial(target_biomass)
-		organ_biomass = initial(organ_biomass)
-		damage = initial(damage)
-		max_health = initial(max_health)
-		growing_organ = initial(growing_organ)
-
-		organ.forceMove(loc)
-		turn_off()
-
+	// Set this limb up using the species name and body zone
+	limb.icon_state = "[building_category]_[limb.body_zone]"
+	limb.name = "\improper biosynthetic [building_category] [parse_zone(limb.body_zone)]"
+	limb.desc = "A synthetically produced [building_category] limb, grown in a tube. This one is for the [parse_zone(limb.body_zone)]."
+	limb.species_id = building_category
+	limb.update_icon_dropped()
+	limb.original_owner = WEAKREF(src)  //prevents updating the icon, so a lizard arm on a human stays a lizard arm etc.
 
 /*
-	Console
+	BPL Console
 */
-
 
 /obj/machinery/computer/bpl
 	name = "bioprotestic console"
@@ -303,114 +185,188 @@
 	icon_screen = "cameras"
 	icon_keyboard = "security_key"
 	light_color = COLOR_DARK_MODERATE_LIME_GREEN
+	/// The growth tank we selected.
 	var/obj/machinery/growth_tank/selected_tank
+	/// List of connected tanks.
 	var/list/obj/machinery/growth_tank/connected_tanks = list()
-	COOLDOWN_DECLARE(resync)
+	/// The category of limbs we're browing in our UI.
+	var/selected_category = SPECIES_HUMAN
+	/// Our internal techweb for growth tank designs.
+	var/datum/techweb/stored_research
+	/// All the categories of organs we can print.
+	var/list/categories = list(SPECIES_HUMAN, SPECIES_LIZARD, SPECIES_MOTH, SPECIES_PLASMAMAN, SPECIES_ETHEREAL, "other")
 
 /obj/machinery/computer/bpl/Initialize(mapload, obj/item/circuitboard/C)
-	.=..()
-	connect_nearby_tanks()
-
-/obj/machinery/computer/bpl/proc/connect_nearby_tanks()
-	//Disconnect all tanks first to prevent duplicate names
-	disconnect_tanks()
-	for(var/obj/machinery/growth_tank/tank in range(6, src))
-		if(tank.connected_console)
-			continue
-		connected_tanks += tank
-		tank.name = "[tank.name] [connected_tanks.len]"
-		tank.connected_console = src
-
-/obj/machinery/computer/bpl/proc/disconnect_tanks()
-	for(var/obj/machinery/growth_tank/tank as anything in connected_tanks)
-		tank.name = initial(tank.name)
-		tank.connected_console = null
-	connected_tanks.Cut()
-
-/obj/machinery/computer/bpl/Destroy()
-	disconnect_tanks()
+	stored_research = new /datum/techweb/specialized/autounlocking/limbgrower
 	.=..()
 
-/obj/machinery/computer/bpl/ui_interact(mob/user, datum/tgui/ui)
+/obj/machinery/computer/bpl/attackby(obj/item/user_item, mob/living/user, params)
+	if(istype(user_item, /obj/item/disk/design_disk/limbs))
+		user.visible_message(span_notice("[user] begins to load \the [user_item] in \the [src]..."),
+			span_notice("You begin to load designs from \the [user_item]..."),
+			span_hear("You hear the clatter of a floppy drive."))
+		var/obj/item/disk/design_disk/limbs/limb_design_disk = user_item
+		if(do_after(user, 2 SECONDS, target = src))
+			for(var/datum/design/found_design in limb_design_disk.blueprints)
+				stored_research.add_design(found_design)
+			update_static_data(user)
+		return
+	.=..()
+
+/// Emagging a limbgrower allows you to build synthetic armblades.
+/obj/machinery/computer/bpl/emag_act(mob/user)
+	if(obj_flags & EMAGGED)
+		return
+	for(var/design_id in SSresearch.techweb_designs)
+		var/datum/design/found_design = SSresearch.techweb_design_by_id(design_id)
+		if((found_design.build_type & LIMBGROWER) && ("emagged" in found_design.category))
+			stored_research.add_design(found_design)
+	to_chat(user, span_warning("Safety overrides have been deactivated!"))
+	obj_flags |= EMAGGED
+	update_static_data(user)
+
+/obj/machinery/limbgrower/ui_interact(mob/user, datum/tgui/ui)
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
 		ui = new(user, src, "BioprotesticConsole", "Bioprotestic Console")
 		ui.open()
 
-/obj/machinery/computer/bpl/ui_assets(mob/user)
-	return list(get_asset_datum(/datum/asset/spritesheet/bpl_organs))
-
 /obj/machinery/computer/bpl/ui_data(mob/user)
 	var/list/data = list()
+
 	if(selected_tank)
 		data["selected_tank"] = REF(selected_tank)
-		data["max_biomass"] = selected_tank.max_biomass
-		data["current_biomass"] = selected_tank.current_biomass
-		if(selected_tank.growing_organ)
-			data["growing_organ"] = selected_tank.growing_organ
-			data["organ_biomass"] = selected_tank.organ_biomass
-			data["target_biomass"] = selected_tank.target_biomass
-			data["damage"] = selected_tank.damage
-			data["decaying"] = selected_tank.decaying
-			data["idle"] = selected_tank.idle
+
+		for(var/datum/reagent/reagent_id in selected_tank.reagents.reagent_list)
+			var/list/reagent_data = list(
+				reagent_name = reagent_id.name,
+				reagent_amount = reagent_id.volume,
+				reagent_type = reagent_id.type
+			)
+			data["reagents"] += list(reagent_data)
+
+		data["total_reagents"] = selected_tank.reagents.total_volume
+		data["max_reagents"] = selected_tank.reagents.maximum_volume
+		data["busy"] = selected_tank.busy
+		data["production_coefficient"] = selected_tank.production_coefficient
 	return data
 
 /obj/machinery/computer/bpl/ui_static_data(mob/user)
 	var/list/data = list()
-	data["organs"] = list()
-	for(var/organ_name in GLOB.bpl_organs)
-		var/obj/item/organ/organ = GLOB.bpl_organs[organ_name]
-		data["organs"] += list(list(
-			"name" = initial(organ.name),
-			"icon_name" = organ_name,
-			"biomass_required" = initial(organ.biomass),
-			"stemcells_required" = ispath(organ, /obj/item/organ) ? STEMCELLS_ORGAN : STEMCELLS_BODYPART
+	data["categories"] = list()
+
+	var/species_categories = categories.Copy()
+	for(var/species in species_categories)
+		species_categories[species] = list()
+	for(var/design_id in stored_research.researched_designs)
+		var/datum/design/limb_design = SSresearch.techweb_design_by_id(design_id)
+		for(var/found_category in species_categories)
+			if(found_category in limb_design.category)
+				species_categories[found_category] += limb_design
+
+	for(var/category in species_categories)
+		var/list/category_data = list(
+			name = category,
+			designs = list(),
+		)
+		for(var/datum/design/found_design in species_categories[category])
+			var/list/all_reagents = list()
+			for(var/reagent_typepath in found_design.reagents_list)
+				var/datum/reagent/reagent_id = find_reagent_object_from_type(reagent_typepath)
+				var/list/reagent_data = list(
+					name = reagent_id.name,
+					amount = found_design.reagents_list[reagent_typepath],
+				)
+				all_reagents += list(reagent_data)
+
+			category_data["designs"] += list(list(
+				parent_category = category,
+				name = found_design.name,
+				id = found_design.id,
+				needed_reagents = all_reagents,
+			))
+
+		data["categories"] += list(category_data)
+
+	data["connected_tanks"] = list()
+	for(var/obj/machinery/growth_tank/tank as anything in connected_tanks)
+		data["connected_tanks"] += list(list(
+			name = tank.name,
+			ref = REF(tank),
 		))
 
-	data["tanks"] = list()
-	for(var/obj/machinery/growth_tank/tank as anything in connected_tanks)
-		data["tanks"] += list(list(
-			"name" = tank.name,
-			"id" = REF(tank),
-		))
 	return data
 
 /obj/machinery/computer/bpl/ui_act(action, list/params)
 	.=..()
 	if(.)
 		return
+
+	if(selected_tank.busy)
+		to_chat(usr, span_warning("The growth tank is busy. Please wait for completion of previous operation."))
+		return
+
 	switch(action)
-		if("select_tank")
-			selected_tank = locate(params["id"]) in connected_tanks
-			.=TRUE
-		if("start_growing")
-			if(!selected_tank?.growing_organ)
-				return
-			var/obj/item/organ/organ = GLOB.bpl_organs[params["organ_name"]]
-			var/stemcell_cost = ispath(organ, /obj/item/organ) ? STEMCELLS_ORGAN : STEMCELLS_BODYPART
-			if(selected_tank.reagents.get_reagent_amount(STEMCELL_REAGENT_PATH) < stemcell_cost)
-				return
-			selected_tank.reagents.remove_reagent(STEMCELL_REAGENT_PATH, stemcell_cost)
-			selected_tank.growing_organ = params["organ_name"]
-			selected_tank.target_biomass = initial(organ.biomass)
-			playsound(selected_tank, "bubble", VOLUME_MID)
-			selected_tank.turn_on()
-			.=TRUE
-		if("dump_organ")
-			if(!selected_tank?.growing_organ)
-				return
-			selected_tank.dump_organ()
-			.=TRUE
-		if("dump_useless_reagents")
-			for(var/datum/reagent/reagent as anything in reagents.reagent_list)
-				if(istype(reagent, BIOMASS_REAGENT_PATH) || istype(reagent, STEMCELL_REAGENT_PATH))
-					continue
-				reagents.del_reagent(reagent.type)
-			.=TRUE
 		if("resync_tanks")
-			if(!COOLDOWN_FINISHED(src, resync))
-				return
-			//Making sure people won't spam with range(6, src)
-			COOLDOWN_START(src, resync, 3 SECONDS)
 			connect_nearby_tanks()
-			.=TRUE
+
+		if("select_tank")
+			var/obj/machinery/growth_tank/tank = locate(params["tank"]) in connected_tanks
+			if(tank)
+				selected_tank = tank
+
+		if("make_limb")
+			if(!selected_tank || selected_tank.being_built)
+				return
+			var/datum/design/design = stored_research.isDesignResearchedID(params["design_id"])
+			if(!design)
+				CRASH("[src] was passed an invalid design id!")
+
+			/// All the reagents we're using to make our organ.
+			var/list/consumed_reagents_list = design.reagents_list.Copy()
+			/// The amount of power we're going to use, based on how much reagent we use.
+			var/power = 0
+			if(ispath(design.build_path, /obj/item/bodypart))
+				consumed_reagents_list[STEMCELL_REAGENT_PATH] = STEMCELLS_BODYPART
+			else
+				consumed_reagents_list[STEMCELL_REAGENT_PATH] = STEMCELLS_ORGAN
+
+			for(var/reagent_id in consumed_reagents_list)
+				consumed_reagents_list[reagent_id] *= selected_tank.production_coefficient
+				//You can replace synthflesh with biomass
+				if(ispath(reagent_id, /datum/reagent/medicine/c2/synthflesh))
+					var/synthflesh = selected_tank.reagents.has_reagent(reagent_id)
+					var/biomass = selected_tank.reagents.has_reagent(BIOMASS_REAGENT_PATH)
+					if(synthflesh < consumed_reagents_list[reagent_id])
+						if(biomass < (consumed_reagents_list[reagent_id]-synthflesh)*2)
+							audible_message(span_notice("The [src] buzzes."))
+							playsound(src, 'sound/machines/buzz-sigh.ogg', 50, FALSE)
+							return
+						consumed_reagents_list[BIOMASS_REAGENT_PATH] = (consumed_reagents_list[reagent_id]-synthflesh)*2
+						consumed_reagents_list[reagent_id] = synthflesh
+
+				else if(!selected_tank.reagents.has_reagent(reagent_id, consumed_reagents_list[reagent_id]))
+					audible_message(span_notice("The [src] buzzes."))
+					playsound(src, 'sound/machines/buzz-sigh.ogg', 50, FALSE)
+					return
+
+				power = max(2000, (power + consumed_reagents_list[reagent_id]))
+
+			for(var/reagent_id in consumed_reagents_list)
+				selected_tank.reagents.remove_reagent(reagent_id, consumed_reagents_list[reagent_id])
+
+			selected_tank.busy = TRUE
+			use_power(power)
+			selected_tank.being_built = design
+			selected_tank.update_icon(UPDATE_ICON_STATE)
+			addtimer(CALLBACK(selected_tank, /obj/machinery/growth_tank/proc/build_item, consumed_reagents_list, params["sel_cat"]), selected_tank.production_speed * selected_tank.production_coefficient)
+			. = TRUE
+
+/obj/machinery/computer/bpl/proc/connect_nearby_tanks()
+	for(var/obj/machinery/growth_tank/tank in connected_tanks)
+		tank.connected_console = null
+	connected_tanks.Cut()
+	for(var/obj/machinery/growth_tank/tank in hearers(5, src))
+		if(!tank.connected_console)
+			connected_tanks += tank
+			tank.connected_console = src

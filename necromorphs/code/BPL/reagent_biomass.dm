@@ -10,7 +10,7 @@
 
 /datum/reagent/consumable/nutriment/stemcells
 	name = "Stem Cells"
-	description = "Partially differentiated cells that can be used as a baseline to grow various limbs and organs"
+	description = "Partially differentiated cells that can be used as a baseline to grow various limbs and organs."
 	taste_mult = 10
 	nutriment_factor = 15 * REAGENTS_METABOLISM
 	reagent_state = LIQUID
@@ -19,7 +19,7 @@
 
 /obj/item/reagent_containers/glass/bottle/stemcells
 	name = "Stem Cell Clinical Sample"
-	desc = "The essence of life"
+	desc = "The essence of life."
 	icon_state = "bottle-4"
 
 /obj/item/reagent_containers/glass/bottle/stemcells/Initialize()
