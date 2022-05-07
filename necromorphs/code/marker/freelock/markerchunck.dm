@@ -137,7 +137,10 @@
 	src.y = y
 	src.z = z
 
-	for(var/mob/living/human/necromorph/N in urange(CHUNK_SIZE, locate(x + (CHUNK_SIZE / 2), y + (CHUNK_SIZE / 2), z)))
+	for(var/mob/living/silicon/marker/M in urange(CHUNK_SIZE, locate(x + (CHUNK_SIZE / 2), y + (CHUNK_SIZE / 2), z)))
+		cameras += M
+
+	for(var/mob/living/carbon/human/necromorph/N in urange(CHUNK_SIZE, locate(x + (CHUNK_SIZE / 2), y + (CHUNK_SIZE / 2), z)))
 		if(N.can_use_marker())
 			cameras += N
 

@@ -139,7 +139,7 @@
 		user.cameraFollow = null
 
 // Return to the Core.
-/mob/living/silicon/marker/proc/view_core()
+/mob/living/silicon/marker/proc/jump_to_marker()
 	if(istype(current,/obj/machinery/holopad))
 		var/obj/machinery/holopad/H = current
 		H.clear_holo(src)

@@ -1,3 +1,6 @@
+GLOBAL_LIST_EMPTY(living_necro_list)
+GLOBAL_LIST_EMPTY(necro_mob_list)
+
 SUBSYSTEM_DEF(necromorph)
 	name = "Necromorph"
 	init_order = SS_INIT_NECROMORPH	//Initializes before atoms
