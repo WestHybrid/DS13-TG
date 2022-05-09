@@ -1,5 +1,5 @@
 SUBSYSTEM_DEF(weeds_decay)
-	name = "Weed Decay"
+	name = "Weeds Decay"
 	priority = FIRE_PRIORITY_WEED
 	runlevels = RUNLEVEL_LOBBY|RUNLEVEL_SETUP|RUNLEVEL_GAME|RUNLEVEL_POSTGAME
 	wait = 5 SECONDS

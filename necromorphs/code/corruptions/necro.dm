@@ -18,18 +18,11 @@
 	. = ..()
 	if(!ignore_weed_destruction)
 		RegisterSignal(loc, COMSIG_TURF_WEED_REMOVED, .proc/weed_removed)
-	var/static/list/connections = list(
-		COMSIG_ATOM_ENTERED = .proc/on_cross,
-	)
-	AddElement(/datum/element/connect_loc, connections)
 
 /// Destroy the necromorph effect when the weed it was on is destroyed
 /obj/structure/necromorph/proc/weed_removed()
 	SIGNAL_HANDLER
 	atom_destruction(MELEE)
-
-/obj/structure/necromorph/proc/on_cross(datum/source, atom/movable/O, oldloc, oldlocs)
-	SIGNAL_HANDLER
 
 /obj/structure/necromorph/play_attack_sound(damage_amount, damage_type, damage_flag)
 	switch(damage_type)
