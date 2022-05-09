@@ -188,7 +188,7 @@ const NecroCounts = (props, context) => {
             >
               <Flex.Item>
                 <center>
-                  <h1 className="whiteTitle">Tier {tier}</h1>
+                  <h1 className="whiteTitle">Tier {tier+1}</h1>
                 </center>
               </Flex.Item>
               <Flex.Item>

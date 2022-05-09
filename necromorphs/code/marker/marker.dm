@@ -6,7 +6,7 @@
 	SSnecromorph.marker = src
 
 	ADD_TRAIT(src, TRAIT_NO_TELEPORT, AI_ANCHOR_TRAIT)
-	status_flags &= ~CANPUSH //AI starts anchored, so dont push it
+	status_flags &= ~CANPUSH //Marker starts anchored, so dont push it
 
 	create_eye()
 	marker_status_ui = new(src)
