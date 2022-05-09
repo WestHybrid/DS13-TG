@@ -77,11 +77,11 @@ const filterNecros = data => {
 
 const StatusIcon = (props, context) => {
   const { entry } = props;
-  const { is_ssd, is_leader, is_queen } = entry;
+  const { is_ssd, is_leader } = entry;
 
   if (is_ssd) {
     return <div unselectable="on" className="ssdIcon" />;
-  } else if (is_leader || is_queen) {
+  } else if (is_leader) {
     return (
       <div unselectable="on" className="leaderIcon">
         <Icon name="star" ml={0.2} />
