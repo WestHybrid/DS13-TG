@@ -1,0 +1,116 @@
+@use 'sass:meta';
+
+.theme-marker_status {
+  // Components
+  @include meta.load-css('../components/BlockQuote.scss');
+  @include meta.load-css('../components/Button.scss', $with: (
+    'color-selected': #52375C,
+  ));
+  @include meta.load-css('../components/Table.scss');
+
+  // Layouts
+  @include meta.load-css('../layouts/Layout.scss');
+  @include meta.load-css('../layouts/TitleBar.scss');
+
+  .Layout__content {
+    background-color: #1B1E25;
+    background-image: url('');
+    background-position: top;
+    background-size: contain;
+    background-repeat: repeat no-repeat;
+  }
+
+  .TitleBar {
+    background-image: url('../../assets/titlebar-necro.png');
+    background-position: right 45px top 50%;
+    background-repeat: no-repeat;
+  }
+
+  .Table__cell {
+    padding: 10px 10px 10px 10px;
+    border-bottom: 1px solid #252933;
+  }
+
+  .Table__row--header .Table__cell,
+  .Table__cell--header {
+    text-align: center;
+  }
+
+  .necroCountTable {
+    text-align: center;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  .necroCountRow {
+    background-color: #52375C;
+  }
+
+  .necroCountCell {
+    padding: 5px 5px 5px 5px;
+    border-bottom: 1px solid #fff;
+    text-align: center;
+  }
+
+  .necroListRow {
+    text-align: left;
+  }
+
+  .underlineCell {
+    border-bottom: 1px solid #fff;
+  }
+
+  .ssdRow {
+    background-color: #1D2128;
+    font-style: italic;
+  }
+
+  .whiteTitle {
+    color: white;
+  }
+
+  .noPadCell {
+    padding: 2px;
+  }
+
+  .actionButton .Flex--iefix,
+  .actionButton .Flex__item {
+    margin: 2px;
+  }
+
+  h3 {
+    margin: 0;
+    padding: 0;
+  }
+
+  h1 {
+    margin: 0;
+    padding: 0;
+  }
+
+  .leaderIcon {
+    width: 16px;
+    height: 16px;
+    background-image: url('../../assets/necroLeaderBg.png');
+  }
+
+  .ssdIcon {
+    width: 16px;
+    height: 16px;
+    background-image: url('../../assets/necroSSDIcon.png');
+  }
+
+  .necro_list {
+    border-collapse: collapse;
+    width: 100%;
+    table-layout: fixed;
+  }
+
+  .necro_list .Table__row {
+    height: 40px;
+  }
+
+  .necro_list .Table__row .Table__cell {
+    vertical-align: middle;
+  }
+}
