@@ -32,7 +32,7 @@
 
 	if(!isnull(node))
 		if(!istype(node))
-			CRASH("Weed created with non-weed node. Type: [node.type]")
+			CRASH("Created weed without weed node. Type: [node.type]")
 		set_parent_node(node)
 	update_icon()
 	AddElement(/datum/element/accelerate_on_crossed)
