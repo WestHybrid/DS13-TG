@@ -31,5 +31,5 @@
 
 /mob/living/silicon/marker/forceMove(atom/destination)
 	. = ..()
-	if(.)
-		//end_multicam()
+//	if(.)
+//		end_multicam()

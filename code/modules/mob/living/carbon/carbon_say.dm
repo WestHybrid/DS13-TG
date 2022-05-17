@@ -1,3 +1,8 @@
+/mob/living/carbon/say(message, bubble_type, list/spans, sanitize, datum/language/language, ignore_spam, forced, filterproof)
+	. = dna?.species?.handle_say(src, message, bubble_type, spans, sanitize, language, ignore_spam, forced, filterproof)
+	if(!.)
+		.=..()
+
 /mob/living/carbon/proc/handle_tongueless_speech(mob/living/carbon/speaker, list/speech_args)
 	SIGNAL_HANDLER
 
