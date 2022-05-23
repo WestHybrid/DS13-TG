@@ -51,12 +51,15 @@
 	changesource_flags = MIRROR_BADMIN|WABBAJACK
 	damage_overlay_type = ""
 	species_language_holder = /datum/language_holder/necro_talk
-	var/health = 100
-	var/list/abilities = list()
+	var/maxHealth = 100
+	var/list/abilities = list(
+		/datum/component/necro_health_meter,
+	)
 
 // We don't remove those abilities manually because all of them should register
 // COMSIG_SPECIES_LOSS signal and remove themselfs once they recieve it
 /datum/species/necromorph/on_species_gain(mob/living/carbon/C, datum/species/old_species, pref_load)
+	C.maxHealth = maxHealth
 	.=..()
 	for(var/path in abilities)
 		if(ispath(path, /datum/action))
@@ -66,7 +69,10 @@
 			C.AddElement(path, src)
 		else if(ispath(path, /datum/component))
 			C.AddComponent(path, src)
-	C.hud_used.infodisplay
+
+/datum/species/necromorph/on_species_loss(mob/living/carbon/human/C, datum/species/new_species, pref_load)
+	C.maxHealth = initial(C.maxHealth)
+	.=..()
 
 /datum/species/necromorph/random_name(gender,unique,lastname)
 	return "[name] [rand(1, 999)]"
@@ -123,3 +129,9 @@
 /datum/language_holder/necro_talk
 	understood_languages = list()
 	spoken_languages = list()
+
+/mob/living/carbon/human/species/necromorph
+	race = /datum/species/necromorph
+
+/mob/living/carbon/human/species/necromorph/is_necromorph()
+	return TRUE
