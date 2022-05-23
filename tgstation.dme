@@ -4469,5 +4469,4 @@
 #include "necromorphs\code\necromorph\organs\organs.dm"
 #include "necromorphs\code\necromorph\species\species.dm"
 #include "necromorphs\code\necromorph\species\necromorphs\necromorph.dm"
-#include "necromorphs\code\necromorph\species\necromorphs\slasher.dm"
 // END_INCLUDE
