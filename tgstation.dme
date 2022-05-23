@@ -4466,7 +4466,6 @@
 #include "necromorphs\code\necromorph\abilities\health.dm"
 #include "necromorphs\code\necromorph\bodyparts\bodyparts.dm"
 #include "necromorphs\code\necromorph\hud\health.dm"
-#include "necromorphs\code\necromorph\organs\organs.dm"
 #include "necromorphs\code\necromorph\species\species.dm"
 #include "necromorphs\code\necromorph\species\necromorphs\necromorph.dm"
 // END_INCLUDE
