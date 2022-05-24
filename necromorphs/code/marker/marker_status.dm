@@ -55,7 +55,7 @@
 
 // Mildly related to the above, but only for when necros are removed from the marker
 // If a necro dies, we don't have to regenerate all necro info and sort it again, just remove them from the data list
-/datum/marker_status/proc/necro_removed(mob/living/carbon/human/necromorph/N)
+/datum/marker_status/proc/necro_removed(mob/living/carbon/necromorph/N)
 	if(!necro_keys)
 		return
 
@@ -147,8 +147,8 @@
 
 	switch(action)
 		if("reconstruct")
-			var/mob/living/carbon/human/necromorph/necroTarget = locate(params["target_ref"]) in GLOB.living_necro_list
-			var/mob/living/carbon/human/necromorph/necroSrc = ui.user
+			var/mob/living/carbon/necromorph/necroTarget = locate(params["target_ref"]) in GLOB.living_necro_list
+			var/mob/living/carbon/necromorph/necroSrc = ui.user
 
 			if(QDELETED(necroTarget) || necroTarget.stat == DEAD)
 				return
@@ -159,8 +159,8 @@
 			//TO DO
 
 		if("rebuild")
-			var/mob/living/carbon/human/necromorph/necroTarget = locate(params["target_ref"]) in GLOB.living_necro_list
-			var/mob/living/carbon/human/necromorph/necroSrc = ui.user
+			var/mob/living/carbon/necromorph/necroTarget = locate(params["target_ref"]) in GLOB.living_necro_list
+			var/mob/living/carbon/necromorph/necroSrc = ui.user
 
 			if(QDELETED(necroTarget) || necroTarget.stat == DEAD)
 				return
@@ -171,8 +171,8 @@
 			//TO DO
 
 		if("watch")
-			var/mob/living/carbon/human/necromorph/necroTarget = locate(params["target_ref"]) in GLOB.living_necro_list
-			var/mob/living/carbon/human/necromorph/necroSrc = ui.user
+			var/mob/living/carbon/necromorph/necroTarget = locate(params["target_ref"]) in GLOB.living_necro_list
+			var/mob/living/carbon/necromorph/necroSrc = ui.user
 
 			if(QDELETED(necroTarget) || necroTarget.stat == DEAD)
 				return

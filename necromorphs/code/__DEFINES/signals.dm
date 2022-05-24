@@ -8,5 +8,5 @@
 #define COMSIG_LIVING_WEEDS_AT_LOC_CREATED "living_weeds_at_loc_created"	///from obj/structure/necromorph/weeds/Initialize()
 #define COMSIG_LIVING_WEEDS_ADJACENT_REMOVED "living_weeds_adjacent_removed"	///from obj/structure/necromorph/weeds/Destroy()
 
-// turf signals
+///Turf signals
 #define COMSIG_TURF_WEED_REMOVED "turf_weed_removed"

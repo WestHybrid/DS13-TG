@@ -2,13 +2,6 @@
 /datum/proc/is_necromorph()
 	return FALSE
 
-//We'll check the species on the brain first, before the rest of the body
-/mob/living/carbon/is_necromorph()
-	return dna.species.is_necromorph()
-
-/datum/species/necromorph/is_necromorph()
-	return TRUE
-
 /proc/jumplink_public(var/mob/user, var/atom/target)
 	if(QDELETED(target))
 		return ""

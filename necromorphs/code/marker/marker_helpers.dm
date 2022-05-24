@@ -2,11 +2,11 @@
 /mob/living/silicon/marker/proc/get_necro_info()
 	var/list/necros = list()
 
-	for(var/mob/living/carbon/human/necromorph/N in total_necros)
-		necros["[N.nicknumber]"] = list(
-			"name" = N.name,
+	for(var/mob/living/carbon/necromorph/necro in total_necros)
+		necros["[necro.nicknumber]"] = list(
+			"name" = necro.name,
 			"strain" = "", // TO DO BUFFS
-			"ref" = "\ref[N]"
+			"ref" = "\ref[necro]"
 		)
 
 	return necros
@@ -14,20 +14,18 @@
 /mob/living/silicon/marker/proc/get_necro_vitals()
 	var/list/necros = list()
 
-	for(var/mob/living/carbon/human/necromorph/N in total_necros)
+	for(var/mob/living/carbon/necromorph/necro in total_necros)
 
-		if(!(N in GLOB.living_necro_list))
+		if(!(necro in GLOB.living_necro_list))
 			continue
 
-		var/area/A = get_area(N)
-		var/area_name = "Unknown"
-		if(A)
-			area_name = A.name
+		var/area/A = get_area(necro)
+		var/area_name = A ? A.name : "Unknown"
 
-		necros["[N.nicknumber]"] = list(
-			"health" = round((N.health / N.maxHealth) * 100, 1),
+		necros["[necro.nicknumber]"] = list(
+			"health" = round((necro.health / necro.maxHealth) * 100, 1),
 			"area" = area_name,
-			"is_ssd" = (!N.client)
+			"is_ssd" = (!necro.client)
 		)
 
 	return necros
@@ -40,8 +38,8 @@
 		list("Ubermorph" = 0),
 	)
 
-	for(var/mob/living/carbon/human/necromorph/N in total_necros)
-		necro_counts[N.tier+1][N.caste_type]++
+	for(var/mob/living/carbon/necromorph/necro in total_necros)
+		necro_counts[necro.tier+1][necro.caste_type]++
 
 	return necro_counts
 
@@ -50,13 +48,13 @@
 
 	var/index = 1
 	var/useless_slots = 0
-	for(var/mob/living/carbon/human/necromorph/N in total_necros)
+	for(var/mob/living/carbon/necromorph/necro in total_necros)
 		// Insert without doing list merging
 		necros[index++] = list(
-			"nicknumber" = N.nicknumber,
-			"tier" = N.tier, // This one is only important for sorting
+			"nicknumber" = necro.nicknumber,
+			"tier" = necro.tier, // This one is only important for sorting
 			"is_leader" = "",//(IS_NECRO_LEADER(X)), // TO DO
-			"caste_type" = N.caste_type,
+			"caste_type" = necro.caste_type,
 		)
 
 	// Clear nulls from the necros list
@@ -68,40 +66,40 @@
 		return sorted_keys
 	return necros
 
-/mob/living/silicon/marker/proc/add_necro(mob/living/carbon/human/necromorph/N)
-	if(!N || !istype(N))
+/mob/living/silicon/marker/proc/add_necro(mob/living/carbon/necromorph/necro)
+	if(!istype(necro))
 		return
 
 	// If the necro is part of another hive, they should be removed from that one first
-	if(N.M && N.M != src)
-		N.M.remove_necro(N, TRUE)
+	if(necro.marker != src)
+		necro.marker.remove_necro(necro, TRUE)
 
 	// Already in the hive
-	if(N in total_necros)
+	if(necro in total_necros)
 		return
 
-	N.M = src
+	necro.marker = src
 
-	total_necros += N
+	total_necros += necro
 
-/mob/living/silicon/marker/proc/remove_necro(mob/living/carbon/human/necromorph/N, hard=FALSE, light_mode = FALSE)
-	if(!N || !istype(N))
+/mob/living/silicon/marker/proc/remove_necro(mob/living/carbon/necromorph/necro, hard=FALSE, light_mode = FALSE)
+	if(!istype(necro))
 		return
 
 	// Make sure the necro was in the marker hive in the first place
-	if(!(N in total_necros))
+	if(!(necro in total_necros))
 		return
 
 	// We allow "soft" removals from the hive (the necro still retains information about the hive)
 	// This is so that necros can add themselves back to the hive if they should die or otherwise go "on leave" from the hive
 	if(hard)
-		N.M = null
+		necro.marker = null
 
-	total_necros -= N
+	total_necros -= necro
 
 	if(!light_mode)
 		marker_status_ui.update_necro_counts()
-		marker_status_ui.necro_removed(N)
+		marker_status_ui.necro_removed(necro)
 
 // This sorts the necro info list by multiple criteria. Prioritized in order:
 // 1. Leaders
