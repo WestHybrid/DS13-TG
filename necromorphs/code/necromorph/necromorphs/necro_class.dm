@@ -8,8 +8,6 @@
 	///The amount of damage a necromorph will do with a 'slash' attack.
 	var/melee_damage_lower = 10
 	var/melee_damage_upper = 10
-	///number of ticks between attacks for a necromorph.
-	var/attack_delay = CLICK_CD_MELEE
 
 	// *** Health *** //
 	///Maximum health a necromorph has.

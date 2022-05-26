@@ -26,6 +26,12 @@
 			action_datum = new action_datum(src)
 			action_datum.Grant(src)
 
+		melee_damage_upper = marker.necro_classes[class].melee_damage_upper
+
+		melee_damage_lower = marker.necro_classes[class].melee_damage_lower
+
+		maxHealth = marker.necro_classes[class].max_health
+
 		conscious_see_in_dark = marker.necro_classes[class].conscious_see_in_dark
 
 		unconscious_see_in_dark = marker.necro_classes[class].unconscious_see_in_dark
@@ -53,6 +59,12 @@
 		QDEL_NULL(temp)
 		// initial() is faster so lets use it for everything else
 
+		melee_damage_upper = initial(class.melee_damage_upper)
+
+		melee_damage_lower = initial(class.melee_damage_lower)
+
+		maxHealth = initial(class.max_health)
+
 		conscious_see_in_dark = initial(class.conscious_see_in_dark)
 
 		unconscious_see_in_dark = initial(class.unconscious_see_in_dark)
@@ -63,7 +75,7 @@
 
 		vent_enter_speed = initial(class.vent_enter_speed)
 
-		vent_exit_speed =initial(class.vent_exit_speed)
+		vent_exit_speed = initial(class.vent_exit_speed)
 
 		silent_vent_crawl = initial(class.silent_vent_crawl)
 
@@ -125,7 +137,8 @@
 	GLOB.living_necro_list -= src
 	GLOB.necro_mob_list -= src
 
-	marker.remove_necro(src)
+	if(marker)
+		marker.remove_necro(src)
 
 	UnregisterSignal(src, COMSIG_MOVABLE_MOVED)
 

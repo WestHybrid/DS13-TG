@@ -8,8 +8,8 @@
 	verb_whisper = "roars"
 	verb_sing = "roars"
 	verb_yell = "roars"
-	melee_damage_lower = 5
 	melee_damage_upper = 5
+	melee_damage_lower = 5
 	health = 5
 	maxHealth = 5
 	//Perhaps set it TRUE
