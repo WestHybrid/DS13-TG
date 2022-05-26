@@ -168,21 +168,3 @@ SUBSYSTEM_DEF(necromorph)
 			S.update_verbs()
 
 */
-
-
-//Shard handling
-/datum/controller/subsystem/necromorph/proc/register_shard(var/obj/item/marker_shard/MS)
-	//var/shardsbefore = shards.len
-	shards |= MS
-
-	//When the number of shards in the world switches between zero and nonzero, we update ability lists
-	//if(shardsbefore == 0)
-		//update_all_ability_lists()
-
-/datum/controller/subsystem/necromorph/proc/unregister_shard(var/obj/item/marker_shard/MS)
-	//var/shardsbefore = shards.len
-	shards -= MS
-	//When the number of shards in the world switches between zero and nonzero, we update ability lists
-	//if((shardsbefore > 0) && (shards.len <= 0))
-		//update_all_ability_lists()
-
