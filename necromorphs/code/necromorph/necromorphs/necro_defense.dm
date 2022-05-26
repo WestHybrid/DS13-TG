@@ -3,13 +3,6 @@
 		return
 	attack_target.attack_necromorph(src, modifiers)
 
-/mob/living/carbon/necromorph/updatehealth()
-	if(status_flags & GODMODE)
-		return
-	.=..()
-	if(health <= 0)
-		death()
-
 /atom/proc/attack_necromorph(mob/living/carbon/necromorph/user, list/modifiers)
 	attack_paw(user, modifiers)
 	return

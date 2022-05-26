@@ -37,3 +37,4 @@
 	var/ui_color = null
 	var/static/markernumber = 0
 	var/list/total_necros = list()
+	var/list/datum/necro_class/necro_classes = list()

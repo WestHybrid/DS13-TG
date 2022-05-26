@@ -120,84 +120,8 @@
 #define SPECIES_NECROMORPH_EXPLODER_RIGHT "right_exploder"
 #define SPECIES_NECROMORPH_EXPLODER_LEFT "left_exploder"
 
+#define NECRO_DEFAULT_VENT_ENTER_TIME 4.5 SECONDS //Standard time for a necromorph to enter a vent.
+#define NECRO_DEFAULT_VENT_EXIT_TIME 2 SECONDS //Standard time for a necromorph to exit a vent.
 
-#define SPECIES_ALL_NECROMORPHS SPECIES_NECROMORPH,\
-SPECIES_NECROMORPH_SLASHER,\
-SPECIES_NECROMORPH_SLASHER_ENHANCED,\
-SPECIES_NECROMORPH_SPITTER,\
-SPECIES_NECROMORPH_PUKER,\
-SPECIES_NECROMORPH_BRUTE,\
-SPECIES_NECROMORPH_EXPLODER,\
-SPECIES_NECROMORPH_BRUTE_FLESH,\
-SPECIES_NECROMORPH_TWITCHER,\
-SPECIES_NECROMORPH_LEAPER,\
-SPECIES_NECROMORPH_LEAPER_ENHANCED,\
-SPECIES_NECROMORPH_LURKER,\
-SPECIES_NECROMORPH_UBERMORPH
-
-//Put this into any necromorph definition which is just a graphical change from its parent species.
-//These flags make sure that variant doesn't appear in places it shouldn't
-#define NECROMORPH_VISUAL_VARIANT	marker_spawnable = FALSE;\
-spawner_spawnable = FALSE;\
-always_customizable = FALSE;\
-variants = list();
-
-#define STANDARD_CLOTHING_EXCLUDE_SPECIES	list("exclude", SPECIES_NABBER,SPECIES_ALL_NECROMORPHS)
-#define SIGNAL	"signal"
-
-
-//Mode
-#define MODE_MARKER "marker"
-#define MODE_UNITOLOGIST "unitologist"
-#define MODE_UNITOLOGIST_SHARD "unitologist_shardbearer"
-
-#define BP_L_FOOT "l_foot"
-#define BP_R_FOOT "r_foot"
-#define BP_L_LEG  "l_leg"
-#define BP_R_LEG  "r_leg"
-#define BP_L_HAND "l_hand"
-#define BP_R_HAND "r_hand"
-#define BP_L_ARM  "l_arm"
-#define BP_R_ARM  "r_arm"
-#define BP_HEAD   "head"
-#define BP_CHEST  "chest"
-#define BP_GROIN  "groin"
-#define BP_TAIL   "tail"
-#define BP_UPPER_BODY	list(BP_CHEST, BP_HEAD, BP_L_ARM, BP_R_ARM, BP_L_HAND, BP_R_HAND)	//Everything above the waist
-#define BP_LOWER_BODY	list(BP_GROIN, BP_L_LEG, BP_R_LEG, BP_L_FOOT, BP_R_FOOT, BP_TAIL)	//Everything below	 the waist
-#define BP_ALL_LIMBS list(BP_CHEST, BP_GROIN, BP_HEAD, BP_L_ARM, BP_R_ARM, BP_L_HAND, BP_R_HAND, BP_L_LEG, BP_R_LEG, BP_L_FOOT, BP_R_FOOT, BP_TAIL)
-#define BP_BY_DEPTH list(BP_HEAD, BP_L_HAND, BP_R_HAND, BP_L_ARM, BP_R_ARM, BP_L_FOOT, BP_R_FOOT, BP_L_LEG, BP_R_LEG, BP_TAIL,  BP_GROIN, BP_CHEST)
-#define BP_OVERALL	"overall"	//A special value that means "target everything evenly"
-
-// Defines mob sizes, used by lockers and to determine what is considered a small sized mob, etc.
-#define MOB_LARGE  		40
-#define MOB_MEDIUM 		20
-#define MOB_SMALL 		10
-#define MOB_TINY 		5
-#define MOB_MINISCULE	1
-
-// Defines how strong the species is compared to humans. Think like strength in D&D
-#define STR_VHIGH       2
-#define STR_HIGH        1
-#define STR_MEDIUM      0
-#define STR_LOW        -1
-#define STR_VLOW       -2
-
-#define MOB_PULL_NONE 0
-#define MOB_PULL_SMALLER 1
-#define MOB_PULL_SAME 2
-#define MOB_PULL_LARGER 3
-
-
-
-#define WALLRUN_DESC	"<h2>PASSIVE: Wallcrawling:</h2><br>\
-This necromorph is capable of crawling along walls, over the heads of other creature. Simply move into a wall to climb onto it.<br>\
- While crawling on a wall, the necromorph gains +15% movespeed and +10% evasion."
-
-
-
-#define SHARED_COOLDOWN_SHOT	(1.5 SECONDS)
-
-
-//Takes a speed in metres per second, and outputs delay in deciseconds between each step to achieve that
-#define SPEED_TO_DELAY(speed) (10/speed)
+#define NECROMORPH_CAN_VENT_CRAWL (1<<0)
+#define NECROMORPH_CAN_HAVE_ID (1<<1)

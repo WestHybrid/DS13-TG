@@ -18,6 +18,9 @@
 	ADD_TRAIT(src, TRAIT_PULL_BLOCKED, ROUNDSTART_TRAIT)
 	ADD_TRAIT(src, TRAIT_HANDS_BLOCKED, ROUNDSTART_TRAIT)
 
+	for(var/datum/necro_class/class as anything in subtypesof(/datum/necro_class))
+		necro_classes[class] = new class()
+
 /mob/living/silicon/marker/Destroy()
 	. = ..()
 

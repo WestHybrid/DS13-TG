@@ -39,7 +39,7 @@
 	)
 
 	for(var/mob/living/carbon/necromorph/necro in total_necros)
-		necro_counts[necro.tier+1][necro.caste_type]++
+		necro_counts[necro.tier+1][initial(necro.class.display_name)]++
 
 	return necro_counts
 
@@ -54,7 +54,7 @@
 			"nicknumber" = necro.nicknumber,
 			"tier" = necro.tier, // This one is only important for sorting
 			"is_leader" = "",//(IS_NECRO_LEADER(X)), // TO DO
-			"caste_type" = necro.caste_type,
+			"caste_type" = necro.class,
 		)
 
 	// Clear nulls from the necros list
