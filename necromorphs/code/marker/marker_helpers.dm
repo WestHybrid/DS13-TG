@@ -141,3 +141,15 @@
 			j--
 
 	return sorted_list
+
+/mob/living/silicon/marker/proc/hive_mind_message(mob/living/carbon/necromorph/sender, message)
+	for(var/mob/dead/observer/observer as anything in GLOB.current_observers_list)
+		if(!observer?.client?.prefs || !(observer.client.prefs.chat_toggles & CHAT_NECROMORPH))
+			continue
+		observer.show_message("[FOLLOW_LINK(observer, sender)] [message]", 2)
+
+	for(var/mob/living/carbon/necromorph/necro as anything in total_necros)
+		necro.show_message(message, 2)
+
+//	for(var/signal/sig as anything in signal_list)
+//		sig.show_message("[FOLLOW_LINK(sig, sender)] [message]", 2)

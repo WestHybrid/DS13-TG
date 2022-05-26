@@ -4469,5 +4469,7 @@
 #include "necromorphs\code\necromorph\necromorphs\necro_class.dm"
 #include "necromorphs\code\necromorph\necromorphs\necro_defense.dm"
 #include "necromorphs\code\necromorph\necromorphs\necro_defines.dm"
+#include "necromorphs\code\necromorph\necromorphs\necro_helpers.dm"
 #include "necromorphs\code\necromorph\necromorphs\necromorph.dm"
+#include "necromorphs\code\necromorph\necromorphs\say.dm"
 // END_INCLUDE
