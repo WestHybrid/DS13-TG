@@ -4461,7 +4461,6 @@
 #include "necromorphs\code\marker\freelock\markerchunck.dm"
 #include "necromorphs\code\necromorph\effects.dm"
 #include "necromorphs\code\necromorph\living.dm"
-#include "necromorphs\code\necromorph\necromorph.dm"
 #include "necromorphs\code\necromorph\abilities\ability.dm"
 #include "necromorphs\code\necromorph\abilities\health.dm"
 #include "necromorphs\code\necromorph\bodyparts\bodyparts.dm"
