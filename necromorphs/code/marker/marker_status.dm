@@ -13,8 +13,8 @@
 
 	var/mob/living/silicon/marker/assoc_marker = null
 
-/datum/marker_status/New(mob/living/silicon/marker/M)
-	assoc_marker = M
+/datum/marker_status/New(mob/living/silicon/marker/marker)
+	assoc_marker = marker
 	update_all_data()
 	START_PROCESSING(SSprocessing, src)
 
@@ -55,13 +55,13 @@
 
 // Mildly related to the above, but only for when necros are removed from the marker
 // If a necro dies, we don't have to regenerate all necro info and sort it again, just remove them from the data list
-/datum/marker_status/proc/necro_removed(mob/living/carbon/necromorph/N)
+/datum/marker_status/proc/necro_removed(mob/living/carbon/necromorph/necro)
 	if(!necro_keys)
 		return
 
 	for(var/index in 1 to length(necro_keys))
 		var/list/info = necro_keys[index]
-		if(info["nicknumber"] == N.nicknumber)
+		if(info["nicknumber"] == necro.nicknumber)
 
 			// tried Remove(), didn't work. *shrug*
 			necro_keys[index] = null
@@ -120,7 +120,7 @@
 	.["marker_color"] = assoc_marker.ui_color
 	.["marker_name"] = assoc_marker.name
 
-/datum/marker_status/proc/open_marker_status(var/mob/user)
+/datum/marker_status/proc/open_marker_status(mob/user)
 	if(!user)
 		return
 

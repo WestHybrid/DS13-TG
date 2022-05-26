@@ -2,6 +2,7 @@
 	create_bodyparts()
 	prepare_huds() //Prevents a nasty runtime on necro init
 	create_internal_organs()
+	ADD_TRAIT(src, TRAIT_IS_NECROMORPH, NECROMORPH_TRAIT)
 	.=..()
 	GLOB.markernet.cameras += src
 	GLOB.markernet.addCamera(src)
@@ -159,9 +160,6 @@
 
 /atom/proc/get_view_range()
 	return 7
-
-/mob/living/carbon/necromorph/is_necromorph()
-	return TRUE
 
 // VENTCRAWLING
 // Handles the entrance and exit on ventcrawling

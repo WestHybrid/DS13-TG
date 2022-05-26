@@ -1,6 +1,4 @@
 //Generic proc to see if a thing is aligned with the necromorph faction
-/datum/proc/is_necromorph()
-	return FALSE
 
 /proc/jumplink_public(var/mob/user, var/atom/target)
 	if(QDELETED(target))
