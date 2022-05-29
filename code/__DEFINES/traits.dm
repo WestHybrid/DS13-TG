@@ -439,6 +439,9 @@ Remember to update _globalvars/traits.dm if you're adding/removing/renaming trai
 /// This mob is currently in rod form.
 #define TRAIT_ROD_FORM "rod_form"
 
+/// This mob is necromorph
+#define TRAIT_IS_NECROMORPH "is_necromorph"
+
 //SKILLS
 #define TRAIT_UNDERWATER_BASKETWEAVING_KNOWLEDGE "underwater_basketweaving"
 #define TRAIT_WINE_TASTER "wine_taster"
@@ -627,6 +630,7 @@ Remember to update _globalvars/traits.dm if you're adding/removing/renaming trai
 #define CAT_QUIRK_MAJOR_DISABILITY 3
 
 // common trait sources
+#define NECROMORPH_TRAIT "necromorph"
 #define TRAIT_GENERIC "generic"
 #define UNCONSCIOUS_TRAIT "unconscious"
 #define EYE_DAMAGE "eye_damage"

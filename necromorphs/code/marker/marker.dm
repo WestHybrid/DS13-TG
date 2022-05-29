@@ -1,7 +1,5 @@
-/obj/item/marker_shard
-
 /mob/living/silicon/marker/Initialize(mapload)
-	. = ..()
+	.=..()
 
 	SSnecromorph.marker = src
 
@@ -18,18 +16,21 @@
 	ADD_TRAIT(src, TRAIT_PULL_BLOCKED, ROUNDSTART_TRAIT)
 	ADD_TRAIT(src, TRAIT_HANDS_BLOCKED, ROUNDSTART_TRAIT)
 
-/mob/living/silicon/marker/Destroy()
-	. = ..()
+	for(var/datum/necro_class/class as anything in subtypesof(/datum/necro_class))
+		necro_classes[class] = new class()
 
-	qdel(marker_status_ui)
-	marker_status_ui = null
+/mob/living/silicon/marker/Destroy()
+	if(SSnecromorph.marker == src)
+		SSnecromorph.marker = null
+	QDEL_NULL(marker_status_ui)
 	GLOB.markernet.cameras -= src
 	GLOB.markernet.removeCamera(src)
+	.=..()
 
 /mob/living/silicon/marker/proc/camera_visibility(mob/camera/marker/moved_eye)
 	GLOB.markernet.visibility(moved_eye, client, all_eyes, TRUE)
 
 /mob/living/silicon/marker/forceMove(atom/destination)
 	. = ..()
-	if(.)
-		//end_multicam()
+//	if(.)
+//		end_multicam()

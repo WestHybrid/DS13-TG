@@ -422,6 +422,7 @@
 		if(HAS_TRAIT(src, TRAIT_BADTOUCH))
 			to_chat(M, span_warning("[src] looks visibly upset as you pat [p_them()] on the head."))
 
+	/*
 	else if ((M.zone_selected == BODY_ZONE_PRECISE_GROIN) && !isnull(src.getorgan(/obj/item/organ/tail)))
 		M.visible_message(span_notice("[M] pulls on [src]'s tail!"), \
 					null, span_hear("You hear a soft patter."), DEFAULT_MESSAGE_RANGE, list(M, src))
@@ -431,6 +432,7 @@
 			to_chat(M, span_warning("[src] makes a grumbling noise as you pull on [p_their()] tail."))
 		else
 			SEND_SIGNAL(src, COMSIG_ADD_MOOD_EVENT, "tailpulled", /datum/mood_event/tailpulled)
+	*/
 
 	else
 		M.visible_message(span_notice("[M] hugs [src] to make [p_them()] feel better!"), \

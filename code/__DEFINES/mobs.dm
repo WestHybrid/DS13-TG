@@ -78,6 +78,8 @@
 #define BODYTYPE_MONKEY (1<<4)
 ///The limb is snouted
 #define BODYTYPE_SNOUTED (1<<5)
+///The limb fits necromorphs
+#define BODYTYPE_NECROMORPH (1<<6)
 
 //Defines for Species IDs
 #define SPECIES_ABDUCTOR "abductor"
