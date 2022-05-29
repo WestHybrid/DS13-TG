@@ -23,7 +23,7 @@
 	var/necro_flags = NONE
 
 	// *** Defense *** //
-	var/list/armor
+	var/list/armor = list()
 
 	///How effective fire is against this necromorph. From 0 to 1 as it is a multiplier.
 	var/fire_resist = 1
@@ -61,3 +61,33 @@
 	var/vent_exit_speed = NECRO_DEFAULT_VENT_EXIT_TIME
 	///Whether the necromorph enters and crawls through vents silently
 	var/silent_vent_crawl = FALSE
+
+/datum/necro_class/proc/load_data(mob/living/carbon/necromorph/necro)
+	for(var/trait in traits)
+		ADD_TRAIT(src, trait, NECROMORPH_TRAIT)
+
+	for(var/datum/action/action_datum as anything in actions)
+		action_datum = new action_datum(src)
+		action_datum.Grant(src)
+
+	necro.armor = getArmor(arglist(armor))
+
+	necro.melee_damage_upper = melee_damage_upper
+
+	necro.melee_damage_lower = melee_damage_lower
+
+	necro.maxHealth = max_health
+
+	necro.conscious_see_in_dark = conscious_see_in_dark
+
+	necro.unconscious_see_in_dark = unconscious_see_in_dark
+
+	necro.necro_flags = necro_flags
+
+	necro.fire_resist =  fire_resist
+
+	necro.vent_enter_speed = vent_enter_speed
+
+	necro.vent_exit_speed = vent_exit_speed
+
+	necro.silent_vent_crawl = silent_vent_crawl

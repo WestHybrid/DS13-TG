@@ -20,65 +20,13 @@
 		if(marker.marker_status_ui)
 			marker.marker_status_ui.update_all_necro_data()
 
-		for(var/trait in marker.necro_classes[class].traits)
-			ADD_TRAIT(src, trait, NECROMORPH_TRAIT)
-
-		for(var/datum/action/action_datum as anything in marker.necro_classes[class].actions)
-			action_datum = new action_datum(src)
-			action_datum.Grant(src)
-
-		melee_damage_upper = marker.necro_classes[class].melee_damage_upper
-
-		melee_damage_lower = marker.necro_classes[class].melee_damage_lower
-
-		maxHealth = marker.necro_classes[class].max_health
-
-		conscious_see_in_dark = marker.necro_classes[class].conscious_see_in_dark
-
-		unconscious_see_in_dark = marker.necro_classes[class].unconscious_see_in_dark
-
-		necro_flags = marker.necro_classes[class].necro_flags
-
-		fire_resist =  marker.necro_classes[class].fire_resist
-
-		vent_enter_speed = marker.necro_classes[class].vent_enter_speed
-
-		vent_exit_speed = marker.necro_classes[class].vent_exit_speed
-
-		silent_vent_crawl = marker.necro_classes[class].silent_vent_crawl
+		var/datum/necro_class/class = marker.necro_classes[class].traits
+		class.load_data(src)
 
 	else
-		// initial() doesn't work with lists so we create a temp datum to get them
 		var/datum/necro_class/temp = new class()
-		for(var/trait in temp.traits)
-			ADD_TRAIT(src, trait, NECROMORPH_TRAIT)
-
-		for(var/datum/action/action_datum as anything in temp.actions)
-			action_datum = new action_datum(src)
-			action_datum.Grant(src)
-
+		temp.load_data(src)
 		QDEL_NULL(temp)
-		// initial() is faster so lets use it for everything else
-
-		melee_damage_upper = initial(class.melee_damage_upper)
-
-		melee_damage_lower = initial(class.melee_damage_lower)
-
-		maxHealth = initial(class.max_health)
-
-		conscious_see_in_dark = initial(class.conscious_see_in_dark)
-
-		unconscious_see_in_dark = initial(class.unconscious_see_in_dark)
-
-		necro_flags = initial(class.necro_flags)
-
-		fire_resist = initial(class.fire_resist)
-
-		vent_enter_speed = initial(class.vent_enter_speed)
-
-		vent_exit_speed = initial(class.vent_exit_speed)
-
-		silent_vent_crawl = initial(class.silent_vent_crawl)
 
 	AddComponent(src, /datum/component/necro_health_meter)
 	RegisterSignal(src, COMSIG_MOVABLE_MOVED, .proc/update_visibility)
