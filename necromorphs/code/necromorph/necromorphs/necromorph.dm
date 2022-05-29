@@ -20,8 +20,8 @@
 		if(marker.marker_status_ui)
 			marker.marker_status_ui.update_all_necro_data()
 
-		var/datum/necro_class/class = marker.necro_classes[class].traits
-		class.load_data(src)
+		var/datum/necro_class/temp = marker.necro_classes[class].traits
+		temp.load_data(src)
 
 	else
 		var/datum/necro_class/temp = new class()
