@@ -56,11 +56,13 @@
 	static_inventory += action_intent
 
 	using = new/atom/movable/screen/language_menu
+	using.icon = ui_style
 	using.screen_loc = ui_alien_language_menu
 	using.hud = src
 	static_inventory += using
 
 	using = new /atom/movable/screen/navigate
+	using.icon = ui_style
 	using.screen_loc = ui_alien_navigate_menu
 	using.hud = src
 	static_inventory += using
@@ -91,6 +93,7 @@
 	static_inventory += pull_icon
 
 	zone_select = new /atom/movable/screen/zone_sel()
+	using.icon = ui_style
 	zone_select.hud = src
 	zone_select.update_appearance()
 	static_inventory += zone_select

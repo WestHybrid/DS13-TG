@@ -29,7 +29,9 @@
 	var/fire_resist = 1
 
 	///the 'abilities' available to a necromorph.
-	var/list/datum/action/actions
+	var/list/datum/action/actions = list(
+		/datum/action/cooldown/necro/charge
+	)
 
 	///List of traits we add in Initialize()
 	var/list/traits = list(
@@ -64,11 +66,11 @@
 
 /datum/necro_class/proc/load_data(mob/living/carbon/necromorph/necro)
 	for(var/trait in traits)
-		ADD_TRAIT(src, trait, NECROMORPH_TRAIT)
+		ADD_TRAIT(necro, trait, NECROMORPH_TRAIT)
 
 	for(var/datum/action/action_datum as anything in actions)
-		action_datum = new action_datum(src)
-		action_datum.Grant(src)
+		action_datum = new action_datum(necro)
+		action_datum.Grant(necro)
 
 	necro.armor = getArmor(arglist(armor))
 
