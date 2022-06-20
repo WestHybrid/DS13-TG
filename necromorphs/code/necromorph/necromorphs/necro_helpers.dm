@@ -34,3 +34,6 @@
 
 /mob/living/carbon/necromorph/proc/update_visibility()
 	GLOB.markernet.updateVisibility(src, 0)
+
+/mob/living/carbon/necromorph/proc/Shout(audio_type, volume, extra_range)
+	return

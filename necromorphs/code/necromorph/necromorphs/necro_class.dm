@@ -29,9 +29,7 @@
 	var/fire_resist = 1
 
 	///the 'abilities' available to a necromorph.
-	var/list/datum/action/actions = list(
-		/datum/action/cooldown/necro/charge
-	)
+	var/list/datum/action/actions = list()
 
 	///List of traits we add in Initialize()
 	var/list/traits = list(

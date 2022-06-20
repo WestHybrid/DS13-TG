@@ -147,3 +147,15 @@
 /datum/action/cooldown/necro/charge/proc/update_resting(atom/movable/source, resting)
 	if(resting)
 		SSmove_manager.stop_looping(source)
+
+/datum/action/cooldown/necro/charge/slasher
+	cooldown_time = 12 SECONDS
+	charge_delay = 1 SECONDS
+	charge_time = 4 SECONDS
+
+/datum/action/cooldown/necro/charge/slasher/do_charge_indicator(atom/charge_target)
+	var/mob/living/carbon/necromorph/source = owner
+	var/shake_dir = pick(-1, 1)
+	animate(source, transform = source.transform.Turn(16*shake_dir), pixel_x = source.pixel_x + 5*shake_dir, time = 1, flags = ANIMATION_PARALLEL)
+	animate(source, transform = matrix(), pixel_x = source.pixel_x-5*shake_dir, time = 9, easing = ELASTIC_EASING)
+	source.Shout(SOUND_SHOUT_LONG, VOLUME_HIGH, TRUE, 3)

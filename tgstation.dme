@@ -4440,6 +4440,7 @@
 #include "necromorphs\code\__HELPERS\patterns.dm"
 #include "necromorphs\code\__HELPERS\turfs.dm"
 #include "necromorphs\code\__HELPERS\unsorted.dm"
+#include "necromorphs\code\_global_vars\lists\scream_sounds.dm"
 #include "necromorphs\code\_subsystems\necromorph.dm"
 #include "necromorphs\code\_subsystems\weeds.dm"
 #include "necromorphs\code\_subsystems\weeds_decay.dm"
@@ -4470,4 +4471,5 @@
 #include "necromorphs\code\necromorph\necromorphs\necro_helpers.dm"
 #include "necromorphs\code\necromorph\necromorphs\necromorph.dm"
 #include "necromorphs\code\necromorph\necromorphs\say.dm"
+#include "necromorphs\code\necromorph\necromorphs\subtypes\slasher.dm"
 // END_INCLUDE
