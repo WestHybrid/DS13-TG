@@ -35,5 +35,5 @@
 /mob/living/carbon/necromorph/proc/update_visibility()
 	GLOB.markernet.updateVisibility(src, 0)
 
-/mob/living/carbon/necromorph/proc/Shout(audio_type, volume, extra_range)
-	return
+/mob/living/carbon/necromorph/proc/play_necro_sound(audio_type, volume, extra_range)
+	CRASH("play_necro_sound() wasn't overriden | Name: [name] | Type: [type]")

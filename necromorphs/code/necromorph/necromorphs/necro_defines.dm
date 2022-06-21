@@ -2,6 +2,7 @@
 	name = "Necromorph"
 	desc = "What the hell is THAT?"
 	icon = 'necromorphs/icons/necromorphs/slasher/fleshy.dmi'
+	sight = 0
 	verb_say = "roars"
 	verb_ask = "roars"
 	verb_exclaim = "roars"
@@ -17,7 +18,6 @@
 	mob_size = MOB_SIZE_HUMAN
 	see_in_dark = 8
 	appearance_flags = KEEP_TOGETHER|TILE_BOUND|PIXEL_SCALE|LONG_GLIDE
-	see_infrared = TRUE
 	hud_type = /datum/hud/necromorph
 	hud_possible = list(HEALTH_HUD,STATUS_HUD,ANTAG_HUD,GLAND_HUD)
 	faction = FACTION_NECROMORPH
@@ -79,6 +79,10 @@
 	///Whether the necromorph enters and crawls through vents silently
 	var/silent_vent_crawl = FALSE
 
+	//How good are we at penetrating armour
+	var/armour_penetration = 0
+
+	var/attack_effect = ATTACK_EFFECT_SLASH
 	COOLDOWN_DECLARE(necro_health_alert_cooldown)
 
 /obj/item/food/meat/slab/human/mutant/necro

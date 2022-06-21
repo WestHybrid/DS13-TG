@@ -49,11 +49,18 @@
 	using.hud = src
 	static_inventory += using
 
-	action_intent = new /atom/movable/screen/combattoggle/flashy()
-	action_intent.hud = src
-	action_intent.icon = ui_style
-	action_intent.screen_loc = ui_combat_toggle
-	static_inventory += action_intent
+	using = new /atom/movable/screen/human/equip()
+	using.icon = ui_style
+	using.screen_loc = ui_equip_position(mymob)
+	using.hud = src
+	static_inventory += using
+
+	using = new /atom/movable/screen/mov_intent
+	using.icon = ui_style
+	using.icon_state = (mymob.m_intent == MOVE_INTENT_RUN ? "running" : "walking")
+	using.screen_loc = ui_movi
+	using.hud = src
+	static_inventory += using
 
 	using = new/atom/movable/screen/language_menu
 	using.icon = ui_style
@@ -93,7 +100,7 @@
 	static_inventory += pull_icon
 
 	zone_select = new /atom/movable/screen/zone_sel()
-	using.icon = ui_style
+	zone_select.icon = ui_style
 	zone_select.hud = src
 	zone_select.update_appearance()
 	static_inventory += zone_select

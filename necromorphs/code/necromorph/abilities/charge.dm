@@ -15,15 +15,13 @@
 	var/charge_damage = 30
 	/// If the current move is being triggered by us or not
 	var/actively_moving = FALSE
-	/// Damage flags applied in attack_generic()
-	var/charge_damage_flags = NONE
 	/// Target dir we are moving to
 	var/tmp/target_dir = NONE
 	/// Dirs we are allowed to move during the charge
 	var/tmp/target_dir_left = NONE
 	var/tmp/target_dir_right = NONE
 
-/datum/action/cooldown/necro/charge/New(Target, cooldown, delay, time, speed, damage, damage_flags)
+/datum/action/cooldown/necro/charge/New(Target, cooldown, delay, time, speed, damage)
 	.=..()
 	if(!isnull(delay))
 		charge_delay = delay
@@ -33,12 +31,10 @@
 		charge_speed = speed
 	if(!isnull(damage))
 		charge_damage = damage
-	if(!isnull(damage_flags))
-		charge_damage_flags = damage_flags
 
 /datum/action/cooldown/necro/charge/Activate(atom/target_atom)
 	// Start pre-cooldown so that the ability can't come up while the charge is happening
-	StartCooldown(charge_time+1)
+	StartCooldown(charge_time+charge_delay+1)
 	do_charge(owner, target_atom)
 
 /datum/action/cooldown/necro/charge/proc/do_charge(atom/movable/charger, atom/target_atom)
@@ -114,35 +110,28 @@
 	// If we bump ourself (!?) or target doesn't block our movement we continue
 	if(owner == target || !target.density)
 		return
-	if(target.uses_integrity)
-		hit_target(source, target, charge_damage)
+	if(ismob(target) || target.uses_integrity)
+		hit_target(source, target)
 	SSmove_manager.stop_looping(source)
 
-/datum/action/cooldown/necro/charge/proc/hit_target(atom/movable/source, atom/target, damage_dealt)
-	var/mob/living/living_source
-	if(isliving(source))
-		living_source = source
-	target.attack_generic(source, charge_damage, BRUTE, charge_damage_flags)
+/datum/action/cooldown/necro/charge/proc/hit_target(mob/living/carbon/necromorph/source, mob/living/target)
+	target.attack_necromorph(source, dealt_damage = charge_damage)
 	if(isliving(target))
-		var/mob/living/living_target = target
-		playsound(get_turf(living_target), 'sound/effects/meteorimpact.ogg', 100, TRUE)
-		if(ishuman(living_target))
-			var/mob/living/carbon/human/human_target = living_target
-			if(human_target.check_shields(source, 0, "the [source.name]", attack_type = LEAP_ATTACK) && living_source)
-				living_source.Stun(6)
+		if(ishuman(target))
+			var/mob/living/carbon/human/human_target = target
+			if(human_target.check_shields(source, 0, "the [source.name]", attack_type = LEAP_ATTACK))
+				source.Stun(6)
 				shake_camera(source, 4, 3)
-				shake_camera(living_target, 2, 1)
+				shake_camera(target, 2, 1)
 				return
-		shake_camera(living_target, 4, 3)
+		shake_camera(target, 4, 3)
 		shake_camera(source, 2, 3)
-		living_target.visible_message("<span class='danger'>[source] slams into [living_target]!</span>", "<span class='userdanger'>[source] tramples you into the ground!</span>")
-		living_target.Knockdown(6)
+		target.visible_message("<span class='danger'>[source] slams into [target]!</span>", "<span class='userdanger'>[source] tramples you into the ground!</span>")
+		target.Knockdown(6)
 	else
 		source.visible_message(span_danger("[source] smashes into [target]!"))
 		shake_camera(source, 4, 3)
-		if(!living_source)
-			return
-		living_source.Stun(6)
+		source.Stun(6)
 
 /datum/action/cooldown/necro/charge/proc/update_resting(atom/movable/source, resting)
 	if(resting)
@@ -158,4 +147,4 @@
 	var/shake_dir = pick(-1, 1)
 	animate(source, transform = source.transform.Turn(16*shake_dir), pixel_x = source.pixel_x + 5*shake_dir, time = 1, flags = ANIMATION_PARALLEL)
 	animate(source, transform = matrix(), pixel_x = source.pixel_x-5*shake_dir, time = 9, easing = ELASTIC_EASING)
-	source.Shout(SOUND_SHOUT_LONG, VOLUME_HIGH, TRUE, 3)
+	source.play_necro_sound(SOUND_SHOUT_LONG, VOLUME_HIGH, TRUE, 3)

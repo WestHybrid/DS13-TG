@@ -12,6 +12,14 @@
 
 /mob/living/carbon/necromorph/slasher
 	class = /datum/necro_class/slasher
+	bodyparts = list(
+		/obj/item/bodypart/chest/necromorph/slasher,
+		/obj/item/bodypart/head/necromorph/slasher,
+		/obj/item/bodypart/l_arm/necromorph/slasher,
+		/obj/item/bodypart/r_arm/necromorph/slasher,
+		/obj/item/bodypart/l_leg/necromorph/slasher,
+		/obj/item/bodypart/r_leg/necromorph/slasher,
+		)
 
-/mob/living/carbon/necromorph/slasher/Shout(audio_type, volume, vary, extra_range)
+/mob/living/carbon/necromorph/slasher/play_necro_sound(audio_type, volume, vary, extra_range)
 	playsound(src, pick(GLOB.slasher_sounds[audio_type]), volume, vary, extra_range)

@@ -8,6 +8,7 @@
 	///The amount of damage a necromorph will do with a 'slash' attack.
 	var/melee_damage_lower = 10
 	var/melee_damage_upper = 10
+	var/armour_penetration = 0
 
 	// *** Health *** //
 	///Maximum health a necromorph has.
@@ -75,6 +76,8 @@
 	necro.melee_damage_upper = melee_damage_upper
 
 	necro.melee_damage_lower = melee_damage_lower
+
+	necro.armour_penetration = armour_penetration
 
 	necro.maxHealth = max_health
 
