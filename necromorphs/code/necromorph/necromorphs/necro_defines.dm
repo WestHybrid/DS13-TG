@@ -25,6 +25,7 @@
 	light_system = MOVABLE_LIGHT
 	type_of_meat = /obj/item/food/meat/slab/human/mutant/necro
 	mob_biotypes = MOB_ORGANIC|MOB_HUMANOID
+	mobility_flags = MOBILITY_MOVE|MOBILITY_STAND|MOBILITY_PULL|MOBILITY_REST|MOBILITY_LIEDOWN
 	bodyparts = list(
 		/obj/item/bodypart/chest/necromorph,
 		/obj/item/bodypart/head/necromorph,
@@ -79,6 +80,9 @@
 	///Whether the necromorph enters and crawls through vents silently
 	var/silent_vent_crawl = FALSE
 
+	//Wether this necromorph is charging at the moment
+	var/charging = FALSE
+
 	//How good are we at penetrating armour
 	var/armour_penetration = 0
 
@@ -96,6 +100,7 @@
 /datum/language_holder/necro_talk
 	understood_languages = list(/datum/language/necro = list(LANGUAGE_MIND))
 	spoken_languages = list(/datum/language/necro = list(LANGUAGE_MIND))
+	omnitongue = TRUE
 
 /datum/language/necro
 	name = "Necromorph"

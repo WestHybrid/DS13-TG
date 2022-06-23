@@ -79,7 +79,7 @@
 
 /datum/action/cooldown/necro/charge/proc/charge_end(datum/move_loop/source)
 	SIGNAL_HANDLER
-	var/atom/movable/charger = source.moving
+	var/mob/living/carbon/necromorph/charger = source.moving
 	UnregisterSignal(charger, list(COMSIG_MOVABLE_BUMP, COMSIG_MOVABLE_PRE_MOVE, COMSIG_MOVABLE_MOVED, COMSIG_MOB_STATCHANGE, COMSIG_LIVING_UPDATED_RESTING))
 	SEND_SIGNAL(owner, COMSIG_FINISHED_CHARGE)
 	actively_moving = FALSE
@@ -144,7 +144,9 @@
 
 /datum/action/cooldown/necro/charge/slasher/do_charge_indicator(atom/charge_target)
 	var/mob/living/carbon/necromorph/source = owner
+	var/matrix/new_matrix = matrix(source.transform)
 	var/shake_dir = pick(-1, 1)
-	animate(source, transform = source.transform.Turn(16*shake_dir), pixel_x = source.pixel_x + 5*shake_dir, time = 1, flags = ANIMATION_PARALLEL)
+	new_matrix.Turn(16*shake_dir)
+	animate(source, transform = new_matrix, pixel_x = source.pixel_x + 5*shake_dir, time = 1, flags = ANIMATION_PARALLEL)
 	animate(source, transform = matrix(), pixel_x = source.pixel_x-5*shake_dir, time = 9, easing = ELASTIC_EASING)
 	source.play_necro_sound(SOUND_SHOUT_LONG, VOLUME_HIGH, TRUE, 3)

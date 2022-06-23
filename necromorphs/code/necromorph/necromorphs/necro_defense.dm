@@ -38,6 +38,7 @@
 		to_chat(user, span_warning("You attempt to touch [src]!"))
 		return FALSE
 
+	user.do_attack_animation(src, user.attack_effect)
 	if (w_uniform)
 		w_uniform.add_fingerprint(user)
 	dealt_damage = dealt_damage ? dealt_damage : rand(user.melee_damage_lower, user.melee_damage_upper)
