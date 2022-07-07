@@ -33,4 +33,16 @@
 	marker?.marker_status_ui.update_necro_info()
 
 /mob/living/carbon/necromorph/proc/update_visibility()
+	SIGNAL_HANDLER
 	GLOB.markernet.updateVisibility(src, 0)
+
+/mob/living/carbon/necromorph/proc/play_necro_sound(audio_type, volume, extra_range)
+	CRASH("play_necro_sound() wasn't overriden | Name: [name] | Type: [type]")
+
+/mob/living/carbon/necromorph/proc/start_charge()
+	SIGNAL_HANDLER
+	charging = TRUE
+
+/mob/living/carbon/necromorph/proc/end_charge()
+	SIGNAL_HANDLER
+	charging = FALSE

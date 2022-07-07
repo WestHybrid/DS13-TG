@@ -8,6 +8,7 @@
 	///The amount of damage a necromorph will do with a 'slash' attack.
 	var/melee_damage_lower = 10
 	var/melee_damage_upper = 10
+	var/armour_penetration = 0
 
 	// *** Health *** //
 	///Maximum health a necromorph has.
@@ -29,7 +30,7 @@
 	var/fire_resist = 1
 
 	///the 'abilities' available to a necromorph.
-	var/list/datum/action/actions
+	var/list/datum/action/actions = list()
 
 	///List of traits we add in Initialize()
 	var/list/traits = list(
@@ -64,17 +65,19 @@
 
 /datum/necro_class/proc/load_data(mob/living/carbon/necromorph/necro)
 	for(var/trait in traits)
-		ADD_TRAIT(src, trait, NECROMORPH_TRAIT)
+		ADD_TRAIT(necro, trait, NECROMORPH_TRAIT)
 
 	for(var/datum/action/action_datum as anything in actions)
-		action_datum = new action_datum(src)
-		action_datum.Grant(src)
+		action_datum = new action_datum(necro)
+		action_datum.Grant(necro)
 
 	necro.armor = getArmor(arglist(armor))
 
 	necro.melee_damage_upper = melee_damage_upper
 
 	necro.melee_damage_lower = melee_damage_lower
+
+	necro.armour_penetration = armour_penetration
 
 	necro.maxHealth = max_health
 

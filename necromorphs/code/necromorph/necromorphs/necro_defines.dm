@@ -2,6 +2,7 @@
 	name = "Necromorph"
 	desc = "What the hell is THAT?"
 	icon = 'necromorphs/icons/necromorphs/slasher/fleshy.dmi'
+	sight = 0
 	verb_say = "roars"
 	verb_ask = "roars"
 	verb_exclaim = "roars"
@@ -17,7 +18,6 @@
 	mob_size = MOB_SIZE_HUMAN
 	see_in_dark = 8
 	appearance_flags = KEEP_TOGETHER|TILE_BOUND|PIXEL_SCALE|LONG_GLIDE
-	see_infrared = TRUE
 	hud_type = /datum/hud/necromorph
 	hud_possible = list(HEALTH_HUD,STATUS_HUD,ANTAG_HUD,GLAND_HUD)
 	faction = FACTION_NECROMORPH
@@ -25,6 +25,7 @@
 	light_system = MOVABLE_LIGHT
 	type_of_meat = /obj/item/food/meat/slab/human/mutant/necro
 	mob_biotypes = MOB_ORGANIC|MOB_HUMANOID
+	mobility_flags = MOBILITY_MOVE|MOBILITY_STAND|MOBILITY_PULL|MOBILITY_REST|MOBILITY_LIEDOWN
 	bodyparts = list(
 		/obj/item/bodypart/chest/necromorph,
 		/obj/item/bodypart/head/necromorph,
@@ -79,6 +80,13 @@
 	///Whether the necromorph enters and crawls through vents silently
 	var/silent_vent_crawl = FALSE
 
+	//Wether this necromorph is charging at the moment
+	var/charging = FALSE
+
+	//How good are we at penetrating armour
+	var/armour_penetration = 0
+
+	var/attack_effect = ATTACK_EFFECT_SLASH
 	COOLDOWN_DECLARE(necro_health_alert_cooldown)
 
 /obj/item/food/meat/slab/human/mutant/necro
@@ -92,6 +100,7 @@
 /datum/language_holder/necro_talk
 	understood_languages = list(/datum/language/necro = list(LANGUAGE_MIND))
 	spoken_languages = list(/datum/language/necro = list(LANGUAGE_MIND))
+	omnitongue = TRUE
 
 /datum/language/necro
 	name = "Necromorph"
