@@ -148,5 +148,6 @@
 	var/shake_dir = pick(-1, 1)
 	new_matrix.Turn(16*shake_dir)
 	animate(source, transform = new_matrix, pixel_x = source.pixel_x + 5*shake_dir, time = 1, flags = ANIMATION_PARALLEL)
+	sleep(1)
 	animate(source, transform = matrix(), pixel_x = source.pixel_x-5*shake_dir, time = 9, easing = ELASTIC_EASING)
 	source.play_necro_sound(SOUND_SHOUT_LONG, VOLUME_HIGH, TRUE, 3)
