@@ -80,13 +80,14 @@
 	///Whether the necromorph enters and crawls through vents silently
 	var/silent_vent_crawl = FALSE
 
-	//Wether this necromorph is charging at the moment
+	///Wether this necromorph is charging at the moment
 	var/charging = FALSE
 
-	//How good are we at penetrating armour
+	///How good are we at penetrating armour
 	var/armour_penetration = 0
 
 	var/attack_effect = ATTACK_EFFECT_SLASH
+
 	COOLDOWN_DECLARE(necro_health_alert_cooldown)
 
 /obj/item/food/meat/slab/human/mutant/necro
