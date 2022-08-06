@@ -1,4 +1,4 @@
-/mob/living/carbon/necromorph/Initialize(mapload, marker_master)
+/mob/living/carbon/necromorph/Initialize(mapload, atom/loc, mob/living/silicon/marker/marker_master)
 	create_bodyparts()
 	prepare_huds() //Prevents a nasty runtime on necro init
 	create_internal_organs()
@@ -9,8 +9,10 @@
 	GLOB.living_necro_list += src
 	GLOB.necro_mob_list += src
 
-	//marker = marker_master
-	marker = SSnecromorph.marker // FOR TESTS
+	if(marker_master)
+		marker = marker_master
+	else
+		marker = SSnecromorph.marker
 
 	generate_name()
 
@@ -22,13 +24,16 @@
 
 		var/datum/necro_class/temp = marker.necro_classes[class].traits
 		temp.load_data(src)
-
+		set_health(temp.max_health)
 	else
 		var/datum/necro_class/temp = new class()
 		temp.load_data(src)
+		set_health(temp.max_health)
 		QDEL_NULL(temp)
 
-	AddComponent(src, /datum/component/necro_health_meter)
+	create_dna()
+
+	AddComponent(/datum/component/health_meter)
 	RegisterSignal(src, COMSIG_MOVABLE_MOVED, .proc/update_visibility)
 	RegisterSignal(src, COMSIG_STARTED_CHARGE, .proc/start_charge)
 	RegisterSignal(src, COMSIG_FINISHED_CHARGE, .proc/end_charge)
@@ -229,3 +234,21 @@
 	if(current_dir)
 		AM.setDir(current_dir)
 	now_pushing = FALSE
+
+/mob/living/carbon/necrmorph/create_dna()
+	dna = new /datum/dna(src)
+	dna.species = new /datum/species/necromorph
+
+/mob/living/carbon/necromorph/update_stat()
+	if(status_flags & GODMODE)
+		return
+	if(stat != DEAD)
+		if(health <= 0 && !HAS_TRAIT(src, TRAIT_NODEATH))
+			death()
+			return
+		else
+			set_stat(CONSCIOUS)
+	update_damage_hud()
+	update_health_hud()
+	update_stamina_hud()
+	med_hud_set_status()
