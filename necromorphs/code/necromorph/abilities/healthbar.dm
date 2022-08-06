@@ -67,7 +67,7 @@
 /atom/movable/screen/health_meter
 	icon = 'necromorphs/icons/hud/healthbar.dmi'
 	icon_state = "backdrop"
-	screen_loc = "TOP,CENTER"
+	screen_loc = "TOP,CENTER-2:-8"
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 
 #undef HEALTHBAR_PIXEL_WIDTH
