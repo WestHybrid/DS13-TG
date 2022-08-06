@@ -4463,7 +4463,7 @@
 #include "necromorphs\code\necromorph\abilities\ability.dm"
 #include "necromorphs\code\necromorph\abilities\charge.dm"
 #include "necromorphs\code\necromorph\abilities\dodge.dm"
-#include "necromorphs\code\necromorph\abilities\health.dm"
+#include "necromorphs\code\necromorph\abilities\healthbar.dm"
 #include "necromorphs\code\necromorph\abilities\shout.dm"
 #include "necromorphs\code\necromorph\bodyparts\bodyparts.dm"
 #include "necromorphs\code\necromorph\bodyparts\slasher.dm"
