@@ -4,7 +4,7 @@
 /datum/component/health_meter
 	var/atom/movable/screen/health_meter/master
 	var/mutable_appearance/health
-	var/dm_filter/alpha_mask
+	var/icon/alpha_mask
 	var/mutable_appearance/foreground
 
 /datum/component/health_meter/Initialize()
@@ -15,10 +15,11 @@
 
 	master = new
 
+	alpha_mask = icon('necromorphs/icons/hud/healthbar.dmi', "alpha_mask")
+
 	health = mutable_appearance('necromorphs/icons/hud/healthbar.dmi', "health_grayscale")
 	health.color = COLOR_CULT_RED
-	alpha_mask = filter(type = "alpha", icon = icon('necromorphs/icons/hud/healthbar.dmi', "alpha_mask"), x = clamp(HEALTHBAR_PIXEL_WIDTH*(holder.health/holder.maxHealth), 0, HEALTHBAR_PIXEL_WIDTH), flags = MASK_INVERSE)
-	health.filters += alpha_mask
+	health.filters += filter(type = "alpha", icon = alpha_mask, x = clamp(HEALTHBAR_PIXEL_WIDTH*(holder.health/holder.maxHealth), 0, HEALTHBAR_PIXEL_WIDTH), flags = MASK_INVERSE)
 
 	foreground = mutable_appearance('necromorphs/icons/hud/healthbar.dmi', "graphic")
 	foreground.maptext_x = 73
@@ -45,6 +46,9 @@
 		if(holder.client)
 			holder.client.screen -= master
 	QDEL_NULL(master)
+	QDEL_NULL(alpha_mask)
+	QDEL_NULL(health)
+	QDEL_NULL(foreground)
 	.=..()
 
 /datum/component/health_meter/proc/on_hud_created(mob/living/source)
@@ -55,9 +59,8 @@
 
 /datum/component/health_meter/proc/on_health_update(mob/living/source)
 	SIGNAL_HANDLER
-	alpha_mask.x = clamp(HEALTHBAR_PIXEL_WIDTH*(source.health/source.maxHealth), 0, HEALTHBAR_PIXEL_WIDTH)
 	health.filters.Cut()
-	health.filters += alpha_mask
+	health.filters += filter(type = "alpha", icon = alpha_mask, x = clamp(HEALTHBAR_PIXEL_WIDTH*(source.health/source.maxHealth), 0, HEALTHBAR_PIXEL_WIDTH), flags = MASK_INVERSE)
 	foreground.maptext = MAPTEXT("[max(0, source.health)]/[source.maxHealth]")
 	master.overlays.Cut()
 	master.overlays += health
