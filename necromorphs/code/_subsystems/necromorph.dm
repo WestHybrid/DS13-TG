@@ -3,7 +3,7 @@ GLOBAL_LIST_EMPTY(necro_mob_list)
 
 SUBSYSTEM_DEF(necromorph)
 	name = "Necromorph"
-	init_order = SS_INIT_NECROMORPH	//Initializes before atoms
+	init_order = INIT_ORDER_NECROMORPH	//Initializes before atoms
 	flags = SS_NO_FIRE
 
 	//Player Controlled - Corruption Growth Tracking
