@@ -235,7 +235,7 @@
 		AM.setDir(current_dir)
 	now_pushing = FALSE
 
-/mob/living/carbon/necrmorph/create_dna()
+/mob/living/carbon/necromorph/create_dna()
 	dna = new /datum/dna(src)
 	dna.species = new /datum/species/necromorph
 
