@@ -79,7 +79,7 @@
 
 	necro.armour_penetration = armour_penetration
 
-	necro.maxHealth = max_health
+	necro.setMaxHealth(max_health)
 
 	necro.conscious_see_in_dark = conscious_see_in_dark
 

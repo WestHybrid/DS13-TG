@@ -24,7 +24,7 @@
 	initial_language_holder = /datum/language_holder/necro_talk
 	light_system = MOVABLE_LIGHT
 	type_of_meat = /obj/item/food/meat/slab/human/mutant/necro
-	mob_biotypes = MOB_ORGANIC|MOB_HUMANOID
+	mob_biotypes = MOB_ORGANIC|MOB_UNDEAD|MOB_HUMANOID
 	mobility_flags = MOBILITY_MOVE|MOBILITY_STAND|MOBILITY_PULL|MOBILITY_REST|MOBILITY_LIEDOWN
 	bodyparts = list(
 		/obj/item/bodypart/chest/necromorph,
