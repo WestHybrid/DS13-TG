@@ -3,7 +3,7 @@
 	name = "Necromorph"
 	id = "necromorph"
 	//There is no way to become it. Period.
-	changesource_flags = NONE
+	changesource_flags = MIRROR_BADMIN
 	exotic_bloodtype = "X"
 
 /datum/species/necromorph/check_roundstart_eligible()
