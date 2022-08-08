@@ -1,36 +1,81 @@
 /obj/structure/corruption
-	name = "necromorph sturcture"
+	name = ""
 	desc = "There is something scary in it."
 	icon = 'necromorphs/icons/effects/corruption.dmi'
-	smoothing_flags = SMOOTH_CORNERS|SMOOTH_BITMASK
+	icon_state = "corruption-1"
+	//smoothing_flags = SMOOTH_BITMASK
 	anchored = TRUE
-	max_integrity = 1
+	max_integrity = 15
+	//Smallest alpha we can get in on_integrity_change()
+	alpha = 20
 	resistance_flags = UNACIDABLE
 	obj_flags = CAN_BE_HIT
+	interaction_flags_atom = NONE
 	/// Node that keeps us alive
 	var/obj/structure/corruption/node/master
-	/// List of corruption near us
-	var/list/nearby_corruption = list()
+	/// A list of cardinal dirs that don't have corruption
+	var/list/non_corrupted_dirs = list()
 
 /obj/structure/corruption/Initialize(mapload)
 	.=..()
+	//We start from 1
+	atom_integrity = 1
 	for(var/direction in GLOB.cardinals)
-		nearby_corruption |= locate(/obj/structure/corruption) in get_step(src, direction)
+		if(!(locate(/obj/structure/corruption) in get_step(src, direction)))
+			non_corrupted_dirs += direction
 
 	//Nodes set master to themself before
 	if(!master)
-		for(var/obj/structure/corruption/corruption as anything in nearby_corruption)
-			if(corruption.master?.remaining_weed_amount && IN_GIVEN_RANGE(src, corruption.master, corruption.master.control_range))
-				//Perhaps I should register for COMSIG_PARENT_QDELETING
-				//For now we assume update() will clean it up the same tick
-				master = corruption.master
+		for(var/obj/structure/corruption/node/node as anything in SScorruption.nodes)
+			if(node.remaining_weed_amount && IN_GIVEN_RANGE(src, node, node.control_range))
+				master = node
 				master.remaining_weed_amount--
-			corruption.nearby_corruption |= src
+				RegisterSignal(master, COMSIG_PARENT_QDELETING, .proc/on_master_delete)
+				break
 
 		if(!master)
-			SScorruption_decay.decaying += src
+			SScorruption.decaying += src
+			return
+	SScorruption.growing += src
 
-/obj/structure/corruption/proc/update(update_nearby = TRUE)
+	//I hate that you can't just override update_integrity()
+	RegisterSignal(src, COMSIG_ATOM_INTEGRITY_CHANGED, .proc/on_integrity_change)
+
+/obj/structure/corruption/Destroy()
+	SScorruption.growing -= src
+	SScorruption.spreading -= src
+	SScorruption.decaying -= src
+	.=..()
+
+/obj/structure/corruption/proc/on_master_delete(datum/source)
+	UnregisterSignal(master, COMSIG_PARENT_QDELETING)
+	master = null
+	for(var/obj/structure/corruption/node/node as anything in SScorruption.nodes[z])
+		if(node.remaining_weed_amount && IN_GIVEN_RANGE(src, node, node.control_range))
+			master = node
+			master.remaining_weed_amount--
+			RegisterSignal(master, COMSIG_PARENT_QDELETING, .proc/on_master_delete)
+			break
+
+/obj/structure/corruption/proc/spread()
+	var/turf/T
+	for(var/direction in non_corrupted_dirs)
+		T = get_step(src, direction)
+		//In case we are in null space/near the map border
+		if(T?.Enter(src))
+			new /obj/structure/corruption(T)
+	non_corrupted_dirs.Cut()
+
+/obj/structure/corruption/proc/on_integrity_change(datum/source, old_integrity, new_integrity)
+	if(master)
+		if(old_integrity > new_integrity)
+			SScorruption.spreading -= src
+			SScorruption.growing |= src
+		else if(new_integrity >= max_integrity)
+			SScorruption.growing -= src
+			if(length(non_corrupted_dirs))
+				SScorruption.spreading |= src
+	alpha = clamp(255*new_integrity/max_integrity, 20, 215)
 
 /obj/structure/corruption/play_attack_sound(damage_amount, damage_type, damage_flag)
 	switch(damage_type)

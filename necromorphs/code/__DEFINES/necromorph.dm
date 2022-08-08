@@ -21,10 +21,10 @@
 
 // Subsytems
 #define INIT_ORDER_NECROMORPH		32
-#define INIT_ORDER_DECAY			26
+#define INIT_ORDER_CORRUPTION		27
 
 // Subsystems Fire
-#define FIRE_PRIORITY_DECAY			37
+#define FIRE_PRIORITY_CORRUPTION	38
 
 //Faction strings
 #define FACTION_NECROMORPH	"necromorph"

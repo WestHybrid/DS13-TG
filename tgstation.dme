@@ -4441,7 +4441,7 @@
 #include "necromorphs\code\__HELPERS\turfs.dm"
 #include "necromorphs\code\__HELPERS\unsorted.dm"
 #include "necromorphs\code\_global_vars\lists\scream_sounds.dm"
-#include "necromorphs\code\_subsystems\corruption_decay.dm"
+#include "necromorphs\code\_subsystems\corruption.dm"
 #include "necromorphs\code\_subsystems\necromorph.dm"
 #include "necromorphs\code\corruption\corruption.dm"
 #include "necromorphs\code\corruption\corruption_node.dm"
