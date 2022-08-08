@@ -2,10 +2,9 @@
 #define HEALTHBAR_PIXEL_HEIGHT 24
 
 /datum/component/health_meter
-	var/atom/movable/screen/health_meter/master
-	var/mutable_appearance/health
-	var/icon/alpha_mask
-	var/mutable_appearance/foreground
+	var/atom/movable/screen/health_meter/background/background
+	var/atom/movable/screen/health_meter/health/health
+	var/atom/movable/screen/health_meter/foreground/foreground
 
 /datum/component/health_meter/Initialize()
 	if(!istype(parent, /mob/living))
@@ -13,27 +12,22 @@
 
 	var/mob/living/holder = parent
 
-	master = new
+	background = new
 
-	alpha_mask = icon('necromorphs/icons/hud/healthbar.dmi', "alpha_mask")
+	health = new
+	health.filters += filter(type = "alpha", icon = icon('necromorphs/icons/hud/healthbar.dmi', "alpha_mask"), x = clamp(HEALTHBAR_PIXEL_WIDTH*(holder.health/holder.maxHealth), 0, HEALTHBAR_PIXEL_WIDTH), flags = MASK_INVERSE)
 
-	health = mutable_appearance('necromorphs/icons/hud/healthbar.dmi', "health_grayscale")
-	health.color = COLOR_CULT_RED
-	health.filters += filter(type = "alpha", icon = alpha_mask, x = clamp(HEALTHBAR_PIXEL_WIDTH*(holder.health/holder.maxHealth), 0, HEALTHBAR_PIXEL_WIDTH), flags = MASK_INVERSE)
-
-	foreground = mutable_appearance('necromorphs/icons/hud/healthbar.dmi', "graphic")
-	foreground.maptext_x = 73
-	foreground.maptext_y = 8
-	foreground.maptext_width = HEALTHBAR_PIXEL_WIDTH
+	foreground = new
 	foreground.maptext = MAPTEXT("[max(0, holder.health)]/[holder.maxHealth]")
 
-	master.overlays += health
-	master.overlays += foreground
-
 	if(holder.hud_used)
-		holder.hud_used.infodisplay += master
+		holder.hud_used.infodisplay += background
+		holder.hud_used.infodisplay += health
+		holder.hud_used.infodisplay += foreground
 		if(holder.client)
-			holder.client.screen += master
+			holder.client.screen += background
+			holder.client.screen += health
+			holder.client.screen += foreground
 	else
 		RegisterSignal(holder, COMSIG_MOB_HUD_CREATED, .proc/on_hud_created)
 
@@ -42,29 +36,32 @@
 /datum/component/health_meter/Destroy(force, silent)
 	var/mob/living/holder = parent
 	if(holder.hud_used)
-		holder.hud_used.infodisplay -= master
+		holder.hud_used.infodisplay -= background
+		holder.hud_used.infodisplay -= health
+		holder.hud_used.infodisplay -= foreground
 		if(holder.client)
-			holder.client.screen -= master
-	QDEL_NULL(master)
-	QDEL_NULL(alpha_mask)
+			holder.client.screen -= background
+			holder.client.screen -= health
+			holder.client.screen -= foreground
+	QDEL_NULL(background)
 	QDEL_NULL(health)
 	QDEL_NULL(foreground)
 	.=..()
 
 /datum/component/health_meter/proc/on_hud_created(mob/living/source)
-	source.hud_used.infodisplay += master
+	source.hud_used.infodisplay += background
+	source.hud_used.infodisplay += health
+	source.hud_used.infodisplay += foreground
 	if(source.client)
-		source.client.screen += master
+		source.client.screen += background
+		source.client.screen += health
+		source.client.screen += foreground
 	UnregisterSignal(source, COMSIG_MOB_HUD_CREATED)
 
 /datum/component/health_meter/proc/on_health_update(mob/living/source)
 	SIGNAL_HANDLER
-	health.filters.Cut()
-	health.filters += filter(type = "alpha", icon = alpha_mask, x = clamp(HEALTHBAR_PIXEL_WIDTH*(source.health/source.maxHealth), 0, HEALTHBAR_PIXEL_WIDTH), flags = MASK_INVERSE)
+	animate(health.filters[1], x = clamp(HEALTHBAR_PIXEL_WIDTH*(source.health/source.maxHealth), 0, HEALTHBAR_PIXEL_WIDTH), time = 0.5 SECONDS)
 	foreground.maptext = MAPTEXT("[max(0, source.health)]/[source.maxHealth]")
-	master.overlays.Cut()
-	master.overlays += health
-	master.overlays += foreground
 
 //Screen objects
 /atom/movable/screen/health_meter
@@ -72,6 +69,19 @@
 	icon_state = "backdrop"
 	screen_loc = "TOP,CENTER-2:-8"
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
+
+/atom/movable/screen/health_meter/background
+	icon_state = "backdrop"
+
+/atom/movable/screen/health_meter/health
+	icon_state  = "health_grayscale"
+	color = COLOR_CULT_RED
+
+/atom/movable/screen/health_meter/foreground
+	icon_state = "graphic"
+	maptext_x = 73
+	maptext_y = 8
+	maptext_width = HEALTHBAR_PIXEL_WIDTH
 
 #undef HEALTHBAR_PIXEL_WIDTH
 #undef HEALTHBAR_PIXEL_HEIGHT
