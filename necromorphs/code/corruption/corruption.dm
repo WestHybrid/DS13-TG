@@ -5,24 +5,26 @@
 	icon_state = "corruption-1"
 	//smoothing_flags = SMOOTH_BITMASK
 	anchored = TRUE
-	max_integrity = 15
+	max_integrity = 25
+	integrity_failure = 5
 	//Smallest alpha we can get in on_integrity_change()
 	alpha = 20
 	resistance_flags = UNACIDABLE
 	obj_flags = CAN_BE_HIT
 	interaction_flags_atom = NONE
 	/// Node that keeps us alive
-	var/obj/structure/corruption/node/master
+	var/datum/corruption_node/master
 	/// A list of cardinal dirs that don't have corruption
 	var/list/turfs_to_spread = list()
 
 /obj/structure/corruption/Initialize(mapload)
 	.=..()
 	ADD_TRAIT(loc, TRAIT_TURF_NECRO_CORRUPTED, src)
-	//We start from 1
-	atom_integrity = 1
+	//We start from 5
+	atom_integrity = 5
 	for(var/direction in GLOB.cardinals)
 		var/turf/T = get_step(src, direction)
+		//In case we are in null space/near the map border
 		if(T)
 			RegisterSignal(T, COMSIG_TURF_CHANGE, .proc/on_turf_change)
 			if(!HAS_TRAIT(T, TRAIT_TURF_NECRO_CORRUPTED))
@@ -36,19 +38,22 @@
 
 	//Nodes set master to themself before
 	if(!master)
-		for(var/obj/structure/corruption/node/node as anything in SScorruption.nodes)
-			if(node.remaining_weed_amount && IN_GIVEN_RANGE(src, node, node.control_range))
+		for(var/datum/corruption_node/node as anything in SScorruption.nodes)
+			if(node.remaining_weed_amount && IN_GIVEN_RANGE(src, node.parent, node.control_range))
 				master = node
 				master.remaining_weed_amount--
 				RegisterSignal(master, COMSIG_PARENT_QDELETING, .proc/on_master_delete)
 				break
-
 		if(!master)
 			SScorruption.decaying += src
 			return
+
 	SScorruption.growing += src
 
 /obj/structure/corruption/Destroy()
+	if(master)
+		master.remaining_weed_amount++
+	master = null
 	SScorruption.growing -= src
 	SScorruption.spreading -= src
 	SScorruption.decaying -= src
@@ -57,8 +62,8 @@
 /obj/structure/corruption/proc/on_master_delete(datum/source)
 	UnregisterSignal(master, COMSIG_PARENT_QDELETING)
 	master = null
-	for(var/obj/structure/corruption/node/node as anything in SScorruption.nodes)
-		if(node.remaining_weed_amount && IN_GIVEN_RANGE(src, node, node.control_range))
+	for(var/datum/corruption_node/node as anything in SScorruption.nodes)
+		if(node.remaining_weed_amount && IN_GIVEN_RANGE(src, node.parent, node.control_range))
 			master = node
 			master.remaining_weed_amount--
 			RegisterSignal(master, COMSIG_PARENT_QDELETING, .proc/on_master_delete)
@@ -67,8 +72,7 @@
 
 /obj/structure/corruption/proc/spread()
 	for(var/turf/T as anything in turfs_to_spread)
-		//In case we are in null space/near the map border
-		if(T?.Enter(src))
+		if(T.Enter(src))
 			new /obj/structure/corruption(T)
 			turfs_to_spread -= T
 

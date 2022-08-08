@@ -1,23 +1,42 @@
-/obj/structure/corruption/node
-	name = ""
-	desc = "There is something scary in it."
-	icon = 'necromorphs/icons/effects/corruption.dmi'
-	icon_state = "corruption-node"
-	//smoothing_flags = SMOOTH_BITMASK
-	anchored = TRUE
-	max_integrity = 15
-	resistance_flags = UNACIDABLE
-	obj_flags = CAN_BE_HIT
-	interaction_flags_atom = NONE
+/datum/corruption_node
+	/// con for an overlay applied to parent
+	var/overlay_icon = 'necromorphs/icons/effects/corruption.dmi'
+	/// icon_state for an overlay applied to parent
+	var/overlay_icon_state = "corruption-node"
+	/// Amount of corruption we can keep
 	var/remaining_weed_amount = 25
+	/// How far can we spread corruption
 	var/control_range = 5
+	/// Icon we've added as an overlay
+	var/icon/overlay
+	/// Corruption we are bound to in real world
+	var/obj/structure/corruption/parent
 
-/obj/structure/corruption/node/Initialize(mapload)
+/datum/corruption_node/New(obj/structure/corruption/new_parent)
+	if(!new_parent)
+		CRASH("Tried to spawn a corruption node without parent in real world.")
 	SScorruption.nodes += src
-	master = src
+	if(new_parent.master)
+		new_parent.master.remaining_weed_amount++
+	new_parent.master = src
+	parent = new_parent
+	overlay = icon(overlay_icon, overlay_icon)
+	new_parent.add_overlay(overlay)
+	RegisterSignal(new_parent, COMSIG_ATOM_BREAK, .proc/on_parent_break)
 	.=..()
-	UnregisterSignal(src, COMSIG_PARENT_QDELETING)
 
-/obj/structure/corruption/node/Destroy()
-	LAZYREMOVE(SScorruption.nodes[z], src)
+/datum/corruption_node/proc/on_parent_break(obj/structure/corruption/source)
+	SIGNAL_HANDLER
+	qdel(src)
+
+/datum/corruption_node/Destroy()
+	SScorruption.nodes -= src
+	parent.cut_overlay(overlay)
+	parent = null
+	.=..()
+
+//Shouldn't be used outside of testing
+/obj/structure/corruption/node
+/obj/structure/corruption/node/Initialize(mapload)
+	new /datum/corruption_node(src)
 	.=..()

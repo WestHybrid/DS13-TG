@@ -1,6 +1,6 @@
 #define SS_GROWING		1
-#define SS_SPREADING	2
-#define SS_DECAYING		3
+#define SS_DECAYING		2
+#define SS_SPREADING	3
 SUBSYSTEM_DEF(corruption)
 	name = "Corruption"
 	init_order = INIT_ORDER_CORRUPTION
@@ -11,16 +11,16 @@ SUBSYSTEM_DEF(corruption)
 	var/list/nodes = list()
 	/// A list of corruption that is still growing and not ready to spread
 	var/list/growing = list()
-	/// A list of grown corruption that is ready to spread
-	var/list/spreading = list()
 	/// A list of decaying corruption
 	var/list/decaying = list()
+	/// A list of grown corruption that is ready to spread
+	var/list/spreading = list()
 
 	var/list/currentrun
 	var/curernt_part = SS_GROWING
 
 /datum/controller/subsystem/corruption/stat_entry(msg)
-	msg = "G:[length(growing)]|S:[length(spreading)]|D:[length(decaying)]"
+	msg = "|G:[length(growing)]|S:[length(spreading)]|D:[length(decaying)]"
 	return ..()
 
 /datum/controller/subsystem/corruption/fire(resumed)
@@ -33,16 +33,6 @@ SUBSYSTEM_DEF(corruption)
 			currentrun.len--
 			if(MC_TICK_CHECK)
 				return
-		curernt_part = SS_SPREADING
-
-	if(curernt_part == SS_SPREADING)
-		if(!resumed)
-			currentrun = spreading.Copy()
-		while(length(currentrun))
-			currentrun[length(currentrun)].spread()
-			currentrun.len--
-			if(MC_TICK_CHECK)
-				return
 		curernt_part = SS_DECAYING
 
 	if(curernt_part == SS_DECAYING)
@@ -50,6 +40,16 @@ SUBSYSTEM_DEF(corruption)
 			currentrun = decaying
 		while(length(currentrun))
 			currentrun[length(currentrun)].take_damage(3)
+			currentrun.len--
+			if(MC_TICK_CHECK)
+				return
+		curernt_part = SS_SPREADING
+
+	if(curernt_part == SS_SPREADING)
+		if(!resumed)
+			currentrun = spreading.Copy()
+		while(length(currentrun))
+			currentrun[length(currentrun)].spread()
 			currentrun.len--
 			if(MC_TICK_CHECK)
 				return
@@ -65,5 +65,5 @@ SUBSYSTEM_DEF(corruption)
 	curernt_part = SScorruption.curernt_part
 
 #undef SS_GROWING
-#undef SS_SPREADING
 #undef SS_DECAYING
+#undef SS_SPREADING
