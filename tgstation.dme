@@ -4434,6 +4434,7 @@
 #include "necromorphs\code\__DEFINES\math.dm"
 #include "necromorphs\code\__DEFINES\necromorph.dm"
 #include "necromorphs\code\__DEFINES\signals.dm"
+#include "necromorphs\code\__DEFINES\traits.dm"
 #include "necromorphs\code\__HELPERS\angles.dm"
 #include "necromorphs\code\__HELPERS\math.dm"
 #include "necromorphs\code\__HELPERS\necromorphs.dm"
