@@ -20,7 +20,7 @@ SUBSYSTEM_DEF(corruption)
 	var/curernt_part = SS_GROWING
 
 /datum/controller/subsystem/corruption/stat_entry(msg)
-	msg = "|G:[length(growing)]|S:[length(spreading)]|D:[length(decaying)]"
+	msg = "|G:[length(growing)]|D:[length(decaying)]|S:[length(spreading)]"
 	return ..()
 
 /datum/controller/subsystem/corruption/fire(resumed)
@@ -37,7 +37,7 @@ SUBSYSTEM_DEF(corruption)
 
 	if(curernt_part == SS_DECAYING)
 		if(!resumed)
-			currentrun = decaying
+			currentrun = decaying.Copy()
 		while(length(currentrun))
 			currentrun[length(currentrun)].take_damage(3)
 			currentrun.len--

@@ -4449,7 +4449,7 @@
 #include "necromorphs\code\corruption\corruption_structure.dm"
 #include "necromorphs\code\datums\round_statics.dm"
 #include "necromorphs\code\datums\elements\accelerate_on_crossed.dm"
-#include "necromorphs\code\game\turf\turf.dm"
+#include "necromorphs\code\game\atoms.dm"
 #include "necromorphs\code\marker\hud.dm"
 #include "necromorphs\code\marker\marker.dm"
 #include "necromorphs\code\marker\marker_defines.dm"

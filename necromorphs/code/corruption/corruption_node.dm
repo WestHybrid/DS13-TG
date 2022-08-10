@@ -2,7 +2,7 @@
 	/// con for an overlay applied to parent
 	var/overlay_icon = 'necromorphs/icons/effects/corruption.dmi'
 	/// icon_state for an overlay applied to parent
-	var/overlay_icon_state = "corruption-node"
+	var/overlay_icon_state = "minigrowth"
 	/// Amount of corruption we can keep
 	var/remaining_weed_amount = 25
 	/// How far can we spread corruption
@@ -16,9 +16,7 @@
 	if(!new_parent)
 		CRASH("Tried to spawn a corruption node without parent in real world.")
 	SScorruption.nodes += src
-	if(new_parent.master)
-		new_parent.master.remaining_weed_amount++
-	new_parent.master = src
+	new_parent.set_master(src)
 	parent = new_parent
 	overlay = icon(overlay_icon, overlay_icon)
 	new_parent.add_overlay(overlay)
@@ -37,6 +35,6 @@
 
 //Shouldn't be used outside of testing
 /obj/structure/corruption/node
-/obj/structure/corruption/node/Initialize(mapload)
-	new /datum/corruption_node(src)
+/obj/structure/corruption/node/Initialize(mapload, datum/corruption_node/new_master)
+	new_master = new /datum/corruption_node(src)
 	.=..()
