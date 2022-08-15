@@ -85,12 +85,12 @@
 	max_stamina_damage = 50
 	wound_resistance = 0
 
-/obj/item/organ/tail/necromorph/leaper
+/obj/item/organ/external/tail/necromorph/leaper
 	name = "tail"
 	desc = "A severed tail. What did you cut this off of?"
 	visual = TRUE
 	icon = 'necromorphs/icons/necromorphs/leaper.dmi'
 	icon_state = "necromorph_tail"
 	zone = BODY_ZONE_PRECISE_GROIN
-	slot = ORGAN_SLOT_TAIL
+	slot = ORGAN_SLOT_EXTERNAL_TAIL
 

@@ -5,6 +5,7 @@ $include dbconfig.txt
 $include comms.txt
 $include resources.txt
 $include interviews.txt
+$include lua.txt
 
 # You can use the @ character at the beginning of a config option to lock it from being edited in-game
 # Example usage:
@@ -157,9 +158,6 @@ LOG_PICTURES
 ## log virus and actions
 LOG_VIRUS
 
-## log cloning actions
-LOG_CLONING
-
 ## log shuttle actions
 LOG_SHUTTLE
 
@@ -168,6 +166,9 @@ LOG_TOOLS
 
 ## Log all timers on timer auto reset
 # LOG_TIMERS_ON_BUCKET_RESET
+
+## log speech indicators
+LOG_SPEECH_INDICATORS
 
 ##Log camera pictures - Must have picture logging enabled
 PICTURE_LOGGING_CAMERA

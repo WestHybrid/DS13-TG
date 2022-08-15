@@ -66,6 +66,8 @@ GLOBAL_LIST_INIT(turfs_openspace, typecacheof(list(
 
 #define ishuman(A) (istype(A, /mob/living/carbon/human))
 
+#define isdummy(A) (istype(A, /mob/living/carbon/human/dummy))
+
 //Human sub-species
 #define isabductor(A) (is_species(A, /datum/species/abductor))
 #define isgolem(A) (is_species(A, /datum/species/golem))
@@ -88,6 +90,8 @@ GLOBAL_LIST_INIT(turfs_openspace, typecacheof(list(
 
 //More carbon mobs
 #define isalien(A) (istype(A, /mob/living/carbon/alien))
+
+#define isalienhumanoid(A) (istype(A, /mob/living/carbon/alien/humanoid))
 
 #define islarva(A) (istype(A, /mob/living/carbon/alien/larva))
 
@@ -157,6 +161,9 @@ GLOBAL_LIST_INIT(turfs_openspace, typecacheof(list(
 
 #define isclown(A) (istype(A, /mob/living/simple_animal/hostile/retaliate/clown))
 
+#define isspider(A) (istype(A, /mob/living/simple_animal/hostile/giant_spider))
+
+
 //Misc mobs
 #define isobserver(A) (istype(A, /mob/dead/observer))
 
@@ -202,6 +209,10 @@ GLOBAL_LIST_INIT(turfs_openspace, typecacheof(list(
 #define ismopable(A) (A && (A.layer <= FLOOR_CLEAN_LAYER)) //If something can be cleaned by floor-cleaning devices such as mops or clean bots
 
 #define isorgan(A) (istype(A, /obj/item/organ))
+
+#define isinternalorgan(A) (istype(A, /obj/item/organ/internal))
+
+#define isexternalorgan(A) (istype(A, /obj/item/organ/external))
 
 #define isclothing(A) (istype(A, /obj/item/clothing))
 
@@ -266,3 +277,5 @@ GLOBAL_LIST_INIT(book_types, typecacheof(list(
 #define is_security_officer_job(job_type) (istype(job_type, /datum/job/security_officer))
 #define is_research_director_job(job_type) (istype(job_type, /datum/job/research_director))
 #define is_unassigned_job(job_type) (istype(job_type, /datum/job/unassigned))
+
+#define isprojectilespell(thing) (istype(thing, /datum/action/cooldown/spell/pointed/projectile))
