@@ -16,7 +16,7 @@
 	pass_flags = PASSTABLE|PASSMOB|PASSMACHINE|PASSSTRUCTURE|PASSVEHICLE|PASSITEM
 	/// Node that keeps us alive
 	var/datum/corruption_node/master
-	/// A list of cardinal dirs that don't have corruption
+	/// A list of turfs near us that don't have corruption and are not dense
 	var/list/turfs_to_spread = list()
 
 /obj/structure/corruption/Initialize(mapload, datum/corruption_node/new_master)
