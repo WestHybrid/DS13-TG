@@ -39,9 +39,9 @@
 	RegisterSignal(src, COMSIG_FINISHED_CHARGE, .proc/end_charge)
 
 /mob/living/carbon/necromorph/create_internal_organs()
-	internal_organs += new /obj/item/organ/eyes
-	internal_organs += new /obj/item/organ/ears
-	internal_organs += new /obj/item/organ/tongue
+	internal_organs += new /obj/item/organ/internal/eyes
+	internal_organs += new /obj/item/organ/internal/ears
+	internal_organs += new /obj/item/organ/internal/tongue
 	.=..()
 
 /mob/living/carbon/necromorph/revive(full_heal = FALSE, admin_revive = FALSE, excess_healing = 0)

@@ -7,7 +7,7 @@
 
 	message = "<span class='necromorph'>[name] roars, '[message]'</span>"
 
-	log_talk(message, LOG_NECRO)
+	log_talk(message, LOG_SAY)
 
 	marker.hive_mind_message(src, message)
 

@@ -3,9 +3,8 @@
 	icon = 'icons/obj/clothing/under/default.dmi'
 	worn_icon = 'icons/mob/clothing/under/default.dmi'
 	body_parts_covered = CHEST|GROIN|LEGS|ARMS
-	permeability_coefficient = 0.9
 	slot_flags = ITEM_SLOT_ICLOTHING
-	armor = list(MELEE = 0, BULLET = 0, LASER = 0,ENERGY = 0, BOMB = 0, BIO = 0, FIRE = 0, ACID = 0, WOUND = 5)
+	armor = list(MELEE = 0, BULLET = 0, LASER = 0,ENERGY = 0, BOMB = 0, BIO = 10, FIRE = 0, ACID = 0, WOUND = 5)
 	equip_sound = 'sound/items/equip/jumpsuit_equip.ogg'
 	drop_sound = 'sound/items/handling/cloth_drop.ogg'
 	pickup_sound = 'sound/items/handling/cloth_pickup.ogg'
@@ -35,7 +34,7 @@
 
 	if(damaged_clothes)
 		. += mutable_appearance('icons/effects/item_damage.dmi', "damageduniform")
-	if(HAS_BLOOD_DNA(src))
+	if(GET_ATOM_BLOOD_DNA_LENGTH(src))
 		. += mutable_appearance('icons/effects/blood.dmi', "uniformblood")
 	if(accessory_overlay)
 		. += accessory_overlay
@@ -110,11 +109,11 @@
 		if(attached_accessory.above_suit)
 			H.update_inv_wear_suit()
 
-/obj/item/clothing/under/equipped(mob/user, slot)
+/obj/item/clothing/under/equipped(mob/living/user, slot)
 	..()
 	if(slot == ITEM_SLOT_ICLOTHING && freshly_laundered)
 		freshly_laundered = FALSE
-		SEND_SIGNAL(user, COMSIG_ADD_MOOD_EVENT, "fresh_laundry", /datum/mood_event/fresh_laundry)
+		user.add_mood_event("fresh_laundry", /datum/mood_event/fresh_laundry)
 
 /obj/item/clothing/under/dropped(mob/user)
 	if(attached_accessory)
@@ -132,7 +131,7 @@
 
 /mob/living/carbon/human/proc/update_sensor_list()
 	var/obj/item/clothing/under/U = w_uniform
-	if(istype(U) && U.has_sensor > 0 && U.sensor_mode)
+	if(istype(U) && U.has_sensor > NO_SENSORS && U.sensor_mode)
 		GLOB.suit_sensors_list |= src
 	else
 		GLOB.suit_sensors_list -= src
@@ -256,13 +255,13 @@
 	sensor_mode = modes.Find(switchMode) - 1
 	if (loc == usr)
 		switch(sensor_mode)
-			if(0)
+			if(SENSOR_OFF)
 				to_chat(usr, span_notice("You disable your suit's remote sensing equipment."))
-			if(1)
+			if(SENSOR_LIVING)
 				to_chat(usr, span_notice("Your suit will now only report whether you are alive or dead."))
-			if(2)
+			if(SENSOR_VITALS)
 				to_chat(usr, span_notice("Your suit will now only report your exact vital lifesigns."))
-			if(3)
+			if(SENSOR_COORDS)
 				to_chat(usr, span_notice("Your suit will now report your exact vital lifesigns as well as your coordinate position."))
 
 	if(ishuman(loc))

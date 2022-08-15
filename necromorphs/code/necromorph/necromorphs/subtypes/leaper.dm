@@ -24,7 +24,7 @@
 		)
 
 /mob/living/carbon/necromorph/leaper/create_internal_organs()
-	internal_organs += new /obj/item/organ/tail/necromorph/leaper
+	internal_organs += new /obj/item/organ/external/tail/necromorph/leaper
 	..()
 
 /mob/living/carbon/necromorph/leaper/play_necro_sound(audio_type, volume, vary, extra_range)

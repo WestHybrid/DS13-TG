@@ -35,10 +35,12 @@
 	///Is there a sprite difference between male and female?
 	var/is_dimorphic = FALSE
 	///The actual color a limb is drawn as, set by /proc/update_limb()
-	VAR_PROTECTED/draw_color
+	var/draw_color //NEVER. EVER. EDIT THIS VALUE OUTSIDE OF UPDATE_LIMB. I WILL FIND YOU. It ruins the limb icon pipeline.
 
 	/// BODY_ZONE_CHEST, BODY_ZONE_L_ARM, etc , used for def_zone
 	var/body_zone
+	/// The body zone of this part in english ("chest", "left arm", etc) without the species attached to it
+	var/plaintext_zone
 	var/aux_zone // used for hands
 	var/aux_layer
 	/// bitflag used to check which clothes cover this bodypart
@@ -160,6 +162,8 @@
 	if(length(wounds))
 		stack_trace("[type] qdeleted with [length(wounds)] uncleared wounds")
 		wounds.Cut()
+	for(var/external_organ in external_organs)
+		qdel(external_organ)
 	return ..()
 
 /obj/item/bodypart/forceMove(atom/destination) //Please. Never forcemove a limb if its's actually in use. This is only for borgs.
@@ -239,14 +243,14 @@
 /obj/item/bodypart/proc/drop_organs(mob/user, violent_removal)
 	SHOULD_CALL_PARENT(TRUE)
 
-	var/turf/bodypart_turf = get_turf(src)
+	var/atom/drop_loc = drop_location()
 	if(IS_ORGANIC_LIMB(src))
-		playsound(bodypart_turf, 'sound/misc/splort.ogg', 50, TRUE, -1)
+		playsound(drop_loc, 'sound/misc/splort.ogg', 50, TRUE, -1)
 	seep_gauze(9999) // destroy any existing gauze if any exists
 	for(var/obj/item/organ/bodypart_organ in get_organs())
 		bodypart_organ.transfer_to_limb(src, owner)
 	for(var/obj/item/item_in_bodypart in src)
-		item_in_bodypart.forceMove(bodypart_turf)
+		item_in_bodypart.forceMove(drop_loc)
 
 ///since organs aren't actually stored in the bodypart themselves while attached to a person, we have to query the owner for what we should have
 /obj/item/bodypart/proc/get_organs()
@@ -676,6 +680,7 @@
 	if(!IS_ORGANIC_LIMB(src))
 		dmg_overlay_type = "robotic"
 
+	recolor_external_organs()
 	return TRUE
 
 //to update the bodypart's icon when not attached to a mob
@@ -712,7 +717,6 @@
 
 	var/image/limb = image(layer = -BODYPARTS_LAYER, dir = image_dir)
 	var/image/aux
-	. += limb
 
 	if(animal_origin)
 		if(IS_ORGANIC_LIMB(src))
@@ -729,6 +733,7 @@
 			var/mutable_appearance/limb_em_block = emissive_blocker(limb.icon, limb.icon_state, alpha = limb.alpha)
 			limb_em_block.dir = image_dir
 			limb.overlays += limb_em_block
+		. += limb
 		return
 
 	//HUSK SHIIIIT
@@ -736,6 +741,7 @@
 		limb.icon = icon_husk
 		limb.icon_state = "[husk_type]_husk_[body_zone]"
 		icon_exists(limb.icon, limb.icon_state, scream = TRUE) //Prints a stack trace on the first failure of a given iconstate.
+		. += limb
 		if(aux_zone) //Hand shit
 			aux = image(limb.icon, "[husk_type]_husk_[aux_zone]", -aux_layer, image_dir)
 			. += aux
@@ -753,6 +759,16 @@
 		limb.icon_state = "[limb_id]_[body_zone]"
 
 	icon_exists(limb.icon, limb.icon_state, TRUE) //Prints a stack trace on the first failure of a given iconstate.
+
+	if(body_zone == BODY_ZONE_R_LEG)
+		var/obj/item/bodypart/r_leg/leg = src
+		var/limb_overlays = limb.overlays
+		var/image/new_limb = leg.generate_masked_right_leg(limb.icon, limb.icon_state, image_dir)
+		if(new_limb)
+			limb = new_limb
+			limb.overlays = limb_overlays
+
+	. += limb
 
 	if(aux_zone) //Hand shit
 		aux = image(limb.icon, "[limb_id]_[aux_zone]", -aux_layer, image_dir)
@@ -780,7 +796,7 @@
 
 	//EMISSIVE CODE END
 	//Draw external organs like horns and frills
-	for(var/obj/item/organ/external/external_organ in external_organs)
+	for(var/obj/item/organ/external/external_organ as anything in external_organs)
 		if(!dropped && !external_organ.can_draw_on_bodypart(owner))
 			continue
 		//Some externals have multiple layers for background, foreground and between
@@ -791,7 +807,6 @@
 					image_dir,
 					external_organ.bitflag_to_layer(external_layer),
 					limb_gender,
-					external_organ.overrides_color ? external_organ.override_color(draw_color) : draw_color
 				)
 
 /obj/item/bodypart/deconstruct(disassembled = TRUE)
@@ -972,11 +987,7 @@
 		QDEL_NULL(current_gauze)
 		SEND_SIGNAL(src, COMSIG_BODYPART_GAUZE_DESTROYED)
 
-
-///Proc to turn bodypart into another.
-/obj/item/bodypart/proc/change_bodypart(obj/item/bodypart/new_type)
-	RETURN_TYPE(/obj/item/bodypart)
-
-	var/mob/living/carbon/our_owner = owner //dropping nulls the limb
-	var/obj/item/bodypart/new_part = new new_type()
-	new_part.replace_limb(our_owner, TRUE)
+///Loops through all of the bodypart's external organs and update's their color.
+/obj/item/bodypart/proc/recolor_external_organs()
+	for(var/obj/item/organ/external/ext_organ as anything in external_organs)
+		ext_organ.inherit_color(force = TRUE)
