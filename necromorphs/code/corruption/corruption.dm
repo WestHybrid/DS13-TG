@@ -1,9 +1,10 @@
-//TODO: Do some refactoring
+//TODO: Wait for Ketrai's sprites
 /obj/structure/corruption
 	name = ""
 	desc = "There is something scary in it."
 	icon = 'necromorphs/icons/effects/corruption.dmi'
 	icon_state = "corruption-1"
+	layer = BELOW_OPEN_DOOR_LAYER
 	//smoothing_flags = SMOOTH_BITMASK
 	anchored = TRUE
 	max_integrity = 25
@@ -21,6 +22,11 @@
 
 /obj/structure/corruption/Initialize(mapload, datum/corruption_node/new_master)
 	.=..()
+	for(var/obj/structure/corruption/corruption in loc)
+		if(corruption == src)
+			continue
+		stack_trace("multiple corruption spawned at ([loc.x], [loc.y], [loc.z])")
+		return INITIALIZE_HINT_QDEL
 
 	if(new_master)
 		set_master(new_master)
@@ -35,28 +41,28 @@
 	SScorruption.growing += src
 
 	atom_integrity = 3
-	RegisterSignal(loc, COMSIG_TURF_CHANGE, .proc/on_source_turf_change)
-	ADD_TRAIT(loc, TRAIT_TURF_NECRO_CORRUPTED, src)
+	SEND_SIGNAL(loc, COMSIG_TURF_NECRO_CORRUPTED, src)
 	for(var/direction in GLOB.cardinals)
 		var/turf/T = get_step(src, direction)
 		//In case we are in null space/near the map border
 		if(T)
 			RegisterSignal(T, COMSIG_TURF_CHANGE, .proc/on_turf_change)
+			RegisterSignal(T, COMSIG_TURF_CHANGED, .proc/on_turf_changed)
 			if(isspaceturf(T) || istype(T, /turf/open/openspace))
 				continue
 			RegisterSignal(T, COMSIG_ATOM_SET_DENSITY, .proc/on_turf_set_density)
 			if(!T.density)
-				if(!HAS_TRAIT(T, TRAIT_TURF_NECRO_CORRUPTED))
-					RegisterSignal(T, SIGNAL_ADDTRAIT(TRAIT_TURF_NECRO_CORRUPTED), .proc/on_nearby_turf_corrupted)
+				if(!(locate(/obj/structure/corruption) in T))
+					RegisterSignal(T, COMSIG_TURF_NECRO_CORRUPTED, .proc/on_nearby_turf_corrupted)
 					turfs_to_spread += T
 				else
-					RegisterSignal(T, SIGNAL_REMOVETRAIT(TRAIT_TURF_NECRO_CORRUPTED), .proc/on_nearby_turf_uncorrupted)
+					RegisterSignal(T, COMSIG_TURF_NECRO_UNCORRUPTED, .proc/on_nearby_turf_uncorrupted)
 
 	//I hate that you can't just override update_integrity()
 	RegisterSignal(src, COMSIG_ATOM_INTEGRITY_CHANGED, .proc/on_integrity_change)
 
 /obj/structure/corruption/Destroy()
-	REMOVE_TRAIT(loc, TRAIT_TURF_NECRO_CORRUPTED, src)
+	SEND_SIGNAL(loc, COMSIG_TURF_NECRO_UNCORRUPTED, src)
 	if(master)
 		master.remaining_weed_amount++
 	master = null
@@ -82,7 +88,6 @@
 				if(node.remaining_weed_amount && IN_GIVEN_RANGE(T, node.parent, node.control_range))
 					node.remaining_weed_amount--
 					new /obj/structure/corruption(T, node)
-					turfs_to_spread -= T
 
 /obj/structure/corruption/proc/on_integrity_change(datum/source, old_integrity, new_integrity)
 	SIGNAL_HANDLER
@@ -92,57 +97,53 @@
 			SScorruption.growing |= src
 		else if(new_integrity >= max_integrity)
 			SScorruption.growing -= src
-			SScorruption.spreading |= src
+			if(length(turfs_to_spread))
+				SScorruption.spreading |= src
 	alpha = clamp(255*new_integrity/max_integrity, 20, 215)
 
 /obj/structure/corruption/proc/on_turf_change(turf/source)
 	SIGNAL_HANDLER
-	var/direction = get_dir(src, source)
 	turfs_to_spread -= source
-	source = null
-	//Wait for the proc to actually replace the turf
-	spawn(0)
-		source = get_step(src, direction)
-		if(isspaceturf(source) || !istype(source, /turf/open/openspace))
-			return
-		if(source.density || HAS_TRAIT(source, TRAIT_TURF_NECRO_CORRUPTED))
-			return
-		turfs_to_spread += source
-		if(atom_integrity >= max_integrity)
-			SScorruption.spreading |= src
 
-/obj/structure/corruption/proc/on_source_turf_change(turf/source)
+/obj/structure/corruption/proc/on_turf_changed(turf/source, flags)
 	SIGNAL_HANDLER
-	source = null
-	//Wait for the proc to actually replace the turf
-	spawn(0)
-		ADD_TRAIT(loc, TRAIT_TURF_NECRO_CORRUPTED, src)
+	if(isspaceturf(source) || !istype(source, /turf/open/openspace))
+		return
+	if(source.density || (locate(/obj/structure/corruption) in source))
+		return
+	turfs_to_spread += source
+	if(atom_integrity >= max_integrity)
+		SScorruption.spreading |= src
 
 /obj/structure/corruption/proc/on_turf_set_density(turf/source, old_density, new_density)
 	SIGNAL_HANDLER
 	if(old_density)
-		if(!HAS_TRAIT(source, TRAIT_TURF_NECRO_CORRUPTED))
-			RegisterSignal(source, SIGNAL_ADDTRAIT(TRAIT_TURF_NECRO_CORRUPTED), .proc/on_nearby_turf_corrupted)
+		if(!(locate(/obj/structure/corruption) in source))
+			RegisterSignal(source, COMSIG_TURF_NECRO_CORRUPTED, .proc/on_nearby_turf_corrupted)
 			turfs_to_spread += source
 			SScorruption.spreading |= src
 		else
-			RegisterSignal(source, SIGNAL_REMOVETRAIT(TRAIT_TURF_NECRO_CORRUPTED), .proc/on_nearby_turf_uncorrupted)
+			RegisterSignal(source, COMSIG_TURF_NECRO_UNCORRUPTED, .proc/on_nearby_turf_uncorrupted)
 	else
 		turfs_to_spread -= source
 		if(!length(turfs_to_spread))
 			SScorruption.spreading -= src
-		UnregisterSignal(source, list(SIGNAL_ADDTRAIT(TRAIT_TURF_NECRO_CORRUPTED), SIGNAL_REMOVETRAIT(TRAIT_TURF_NECRO_CORRUPTED)))
+		UnregisterSignal(source, list(COMSIG_TURF_NECRO_CORRUPTED, COMSIG_TURF_NECRO_UNCORRUPTED))
 
 /obj/structure/corruption/proc/on_nearby_turf_corrupted(turf/source)
 	SIGNAL_HANDLER
+	UnregisterSignal(source, COMSIG_TURF_NECRO_CORRUPTED)
 	turfs_to_spread -= source
 	if(!length(turfs_to_spread))
 		SScorruption.spreading -= src
+	RegisterSignal(source, COMSIG_TURF_NECRO_UNCORRUPTED, .proc/on_nearby_turf_uncorrupted)
 
 /obj/structure/corruption/proc/on_nearby_turf_uncorrupted(turf/source)
 	SIGNAL_HANDLER
-	SScorruption.spreading |= src
+	UnregisterSignal(source, COMSIG_TURF_NECRO_UNCORRUPTED)
 	turfs_to_spread += source
+	SScorruption.spreading |= src
+	RegisterSignal(source, COMSIG_TURF_NECRO_CORRUPTED, .proc/on_nearby_turf_corrupted)
 
 // Doesn't do any safety checks, make sure to do them first
 /obj/structure/corruption/proc/set_master(datum/corruption_node/new_master)

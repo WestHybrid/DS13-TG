@@ -18,7 +18,7 @@
 	SScorruption.nodes += src
 	new_parent.set_master(src)
 	parent = new_parent
-	overlay = icon(overlay_icon, overlay_icon)
+	overlay = iconstate2appearance(overlay_icon, overlay_icon_state)
 	new_parent.add_overlay(overlay)
 	RegisterSignal(new_parent, COMSIG_ATOM_BREAK, .proc/on_parent_break)
 	.=..()
@@ -36,5 +36,10 @@
 //Shouldn't be used outside of testing
 /obj/structure/corruption/node
 /obj/structure/corruption/node/Initialize(mapload, datum/corruption_node/new_master)
+	for(var/obj/structure/corruption/corruption in loc)
+		if(corruption == src)
+			continue
+		new /datum/corruption_node(corruption)
+		return INITIALIZE_HINT_QDEL
 	new_master = new /datum/corruption_node(src)
 	.=..()
