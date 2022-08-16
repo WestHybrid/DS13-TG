@@ -1,28 +1,17 @@
-
-/*
-* structure/necromorph
-*/
 /obj/structure/necromorph
-	name = "necromorph thing"
-	desc = "theres something necromorph about this"
+	name = "necromorph sturcture"
+	desc = "There is something scary in it."
 	icon = 'necromorphs/icons/effects/corruption.dmi'
 	anchored = TRUE
 	max_integrity = 1
 	resistance_flags = UNACIDABLE
 	obj_flags = CAN_BE_HIT
-	var/on_fire = FALSE
-	///Set this to true if this object isn't destroyed when the weeds under it is.
-	var/ignore_weed_destruction = FALSE
+	/// Weed below this structure, if it's dying then we are dying as well
+	var/obj/structure/corruption/master
 
-/obj/structure/necromorph/Initialize()
-	. = ..()
-	if(!ignore_weed_destruction)
-		RegisterSignal(loc, COMSIG_TURF_WEED_REMOVED, .proc/weed_removed)
-
-/// Destroy the necromorph effect when the weed it was on is destroyed
-/obj/structure/necromorph/proc/weed_removed()
-	SIGNAL_HANDLER
-	atom_destruction(MELEE)
+/obj/structure/necromorph/Initialize(mapload)
+	.=..()
+	master = locate(/obj/structure/corruption) in loc
 
 /obj/structure/necromorph/play_attack_sound(damage_amount, damage_type, damage_flag)
 	switch(damage_type)

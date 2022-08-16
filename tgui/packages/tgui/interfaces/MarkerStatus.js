@@ -5,20 +5,18 @@ import { Flex, Divider, Collapsible, Icon, Button, Input, NumberInput, Fragment,
 import { Window } from '../layouts';
 
 const redFont = {
-  color: "red",
+  color: 'red',
 };
 
 /**
  * Creates a filter function based on the search key (passed to the search bar),
  * the categories selected to be searched through, and the max health filter
  */
-const getFilter = data => {
-  const {
-    searchKey, searchFilters, maxHealth,
-  } = data;
+const getFilter = (data) => {
+  const { searchKey, searchFilters, maxHealth } = data;
   const textSearch = createSearch(searchKey);
 
-  return entry => {
+  return (entry) => {
     if (entry.health > maxHealth) {
       return false;
     }
@@ -41,11 +39,14 @@ const getFilter = data => {
  * Filters the list of necros and returns a set of rows that will be used in the
  * necro list table
  */
-const filterNecros = data => {
+const filterNecros = (data) => {
   const {
-    searchKey, searchFilters,
-    maxHealth, necro_keys,
-    necro_vitals, necro_info,
+    searchKey,
+    searchFilters,
+    maxHealth,
+    necro_keys,
+    necro_vitals,
+    necro_info,
   } = data;
   const necro_entries = [];
 
@@ -96,28 +97,21 @@ export const MarkerStatus = (props, context) => {
 
   return (
     <Window
-      title={marker_name + " Status"}
+      title={marker_name + ' Status'}
       theme="marker_status"
       resizable
       width={600}
-      height={680}
-    >
+      height={680}>
       <Window.Content scrollable>
-        <NecroCollapsible
-          title="General Marker Information"
-        >
+        <NecroCollapsible title="General Marker Information">
           <GeneralInformation />
         </NecroCollapsible>
         <Divider />
-        <NecroCollapsible
-          title="Marker Counts"
-        >
+        <NecroCollapsible title="Marker Counts">
           <NecroCounts />
         </NecroCollapsible>
         <Divider />
-        <NecroCollapsible
-          title="Marker Necromorph List"
-        >
+        <NecroCollapsible title="Marker Necromorph List">
           <NecroList />
         </NecroCollapsible>
       </Window.Content>
@@ -134,9 +128,8 @@ const NecroCollapsible = (props, context) => {
     <Collapsible
       title={title}
       backgroundColor={!!marker_color && marker_color}
-      color={!marker_color && "necro"}
-      open
-    >
+      color={!marker_color && 'necro'}
+      open>
       {children}
     </Collapsible>
   );
@@ -144,25 +137,15 @@ const NecroCollapsible = (props, context) => {
 
 const GeneralInformation = (props, context) => {
   const { data } = useBackend(context);
-  const {
-    marker_location,
-    total_necros,
-  } = data;
+  const { marker_location, total_necros } = data;
 
   return (
-    <Flex
-      direction="column"
-      align="center"
-    >
-      <Flex.Item
-        textAlign="center"
-      >
+    <Flex direction="column" align="center">
+      <Flex.Item textAlign="center">
         <h3 className="whiteTitle">The Marker is in:</h3>
         <h1 className="whiteTitle">{marker_location}</h1>
       </Flex.Item>
-      <Flex.Item
-        mt={1}
-      >
+      <Flex.Item mt={1}>
         <i>Total necros: {total_necros}</i>
       </Flex.Item>
     </Flex>
@@ -174,21 +157,14 @@ const NecroCounts = (props, context) => {
   const { necro_counts, marker_color } = data;
 
   return (
-    <Flex
-      direction="column-reverse"
-    >
+    <Flex direction="column-reverse">
       {necro_counts.map((counts, tier) => {
         return (
-          <Flex.Item
-            key={tier}
-            mb={tier !== 0 ? 2 : 0}
-          >
-            <Flex
-              direction="column"
-            >
+          <Flex.Item key={tier} mb={tier !== 0 ? 2 : 0}>
+            <Flex direction="column">
               <Flex.Item>
                 <center>
-                  <h1 className="whiteTitle">Tier {tier+1}</h1>
+                  <h1 className="whiteTitle">Tier {tier + 1}</h1>
                 </center>
               </Flex.Item>
               <Flex.Item>
@@ -196,23 +172,19 @@ const NecroCounts = (props, context) => {
                   <Table className="necroCountTable" collapsing>
                     <Table.Row header>
                       {Object.keys(counts).map((caste, i) => (
-                        <Table.Cell
-                          key={i}
-                          className="underlineCell"
-                          width={7}
-                        >
+                        <Table.Cell key={i} className="underlineCell" width={7}>
                           {caste === 'Bloody Larva' ? 'Larva' : caste}
                         </Table.Cell>
                       ))}
                     </Table.Row>
                     <Table.Row className="necroCountRow">
                       {Object.keys(counts).map((caste, i) => (
-                        <Table.Cell key={i}
+                        <Table.Cell
+                          key={i}
                           className="necroCountCell"
                           backgroundColor={!!marker_color && marker_color}
                           textAlign="center"
-                          width={7}
-                        >
+                          width={7}>
                           {counts[caste]}
                         </Table.Cell>
                       ))}
@@ -222,7 +194,8 @@ const NecroCounts = (props, context) => {
               </Flex.Item>
             </Flex>
           </Flex.Item>
-        ); })}
+        );
+      })}
     </Flex>
   );
 };
@@ -230,13 +203,13 @@ const NecroCounts = (props, context) => {
 const NecroList = (props, context) => {
   const { act, data } = useBackend(context);
   const [searchKey, setSearchKey] = useLocalState(context, 'searchKey', '');
-  const [searchFilters, setSearchFilters] = useLocalState(context, 'searchFilters', { name: true, strain: true, location: true });
+  const [searchFilters, setSearchFilters] = useLocalState(
+    context,
+    'searchFilters',
+    { name: true, strain: true, location: true }
+  );
   const [maxHealth, setMaxHealth] = useLocalState(context, 'maxHealth', 100);
-  const {
-    necro_keys, necro_vitals,
-    necro_info, user_ref,
-    marker_color,
-  } = data;
+  const { necro_keys, necro_vitals, necro_info, user_ref, marker_color } = data;
   const necro_entries = filterNecros({
     searchKey: searchKey,
     searchFilters: searchFilters,
@@ -247,57 +220,53 @@ const NecroList = (props, context) => {
   });
 
   return (
-    <Flex
-      direction="column"
-    >
+    <Flex direction="column">
       <Flex.Item mb={1}>
-        <Flex
-          align="baseline"
-        >
-          <Flex.Item width="100px">
-            Search Filters:
-          </Flex.Item>
+        <Flex align="baseline">
+          <Flex.Item width="100px">Search Filters:</Flex.Item>
           <Flex.Item>
             <Button.Checkbox
               inline
               content="Name"
               checked={searchFilters.name}
               backgroundColor={searchFilters.name && marker_color}
-              onClick={() => setSearchFilters({
-                ...searchFilters,
-                name: !searchFilters.name,
-              })}
+              onClick={() =>
+                setSearchFilters({
+                  ...searchFilters,
+                  name: !searchFilters.name,
+                })
+              }
             />
             <Button.Checkbox
               inline
               content="Strain"
               checked={searchFilters.strain}
               backgroundColor={searchFilters.strain && marker_color}
-              onClick={() => setSearchFilters({
-                ...searchFilters,
-                strain: !searchFilters.strain,
-              })}
+              onClick={() =>
+                setSearchFilters({
+                  ...searchFilters,
+                  strain: !searchFilters.strain,
+                })
+              }
             />
             <Button.Checkbox
               inline
               content="Location"
               checked={searchFilters.location}
               backgroundColor={searchFilters.location && marker_color}
-              onClick={() => setSearchFilters({
-                ...searchFilters,
-                location: !searchFilters.location,
-              })}
+              onClick={() =>
+                setSearchFilters({
+                  ...searchFilters,
+                  location: !searchFilters.location,
+                })
+              }
             />
           </Flex.Item>
         </Flex>
       </Flex.Item>
       <Flex.Item mb={1}>
-        <Flex
-          align="baseline"
-        >
-          <Flex.Item width="100px">
-            Max Health:
-          </Flex.Item>
+        <Flex align="baseline">
+          <Flex.Item width="100px">Max Health:</Flex.Item>
           <Flex.Item>
             <NumberInput
               animated
@@ -333,11 +302,7 @@ const NecroList = (props, context) => {
         {necro_entries.map((entry, i) => (
           <Table.Row
             key={i}
-            className={classes([
-              entry.is_ssd ? "ssdRow" : "",
-              "necroListRow",
-            ])}
-          >
+            className={classes([entry.is_ssd ? 'ssdRow' : '', 'necroListRow'])}>
             {/*
               Leader/SSD icon
               You might think using an image for rounded corners is stupid,
@@ -351,9 +316,11 @@ const NecroList = (props, context) => {
             <Table.Cell>{entry.strain}</Table.Cell>
             <Table.Cell>{entry.location}</Table.Cell>
             <Table.Cell>
-              {entry.health < 30
-                ? <b style={redFont}>{entry.health}%</b>
-                : <Fragment>{entry.health}%</Fragment>}
+              {entry.health < 30 ? (
+                <b style={redFont}>{entry.health}%</b>
+              ) : (
+                <Fragment>{entry.health}%</Fragment>
+              )}
             </Table.Cell>
             <Table.Cell className="noPadCell" textAlign="center">
               {entry.ref !== user_ref && (
@@ -363,14 +330,13 @@ const NecroList = (props, context) => {
                   className="actionButton"
                   align="center"
                   justify="space-around"
-                  inline
-                >
+                  inline>
                   <Flex.Item>
                     <Button
                       content="Watch"
                       color="necro"
-                      onClick={
-                        () => act("watch", {
+                      onClick={() =>
+                        act('watch', {
                           target_ref: entry.ref,
                         })
                       }
@@ -397,8 +363,8 @@ const MarkerButtons = (props, context) => {
         <Button
           content="Rebuild"
           color="green"
-          onClick={
-            () => act("rebuild", {
+          onClick={() =>
+            act('rebuild', {
               target_ref: target_ref,
             })
           }
@@ -408,8 +374,8 @@ const MarkerButtons = (props, context) => {
         <Button
           content="Reconstruct"
           color="blue"
-          onClick={
-            () => act("reconstruct", {
+          onClick={() =>
+            act('reconstruct', {
               target_ref: target_ref,
             })
           }

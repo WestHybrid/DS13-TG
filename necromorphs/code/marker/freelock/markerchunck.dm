@@ -137,12 +137,12 @@
 	src.y = y
 	src.z = z
 
-	for(var/mob/living/silicon/marker/M in urange(CHUNK_SIZE, locate(x + (CHUNK_SIZE / 2), y + (CHUNK_SIZE / 2), z)))
-		cameras += M
+	//for(var/mob/living/silicon/marker/M in urange(CHUNK_SIZE, locate(x + (CHUNK_SIZE / 2), y + (CHUNK_SIZE / 2), z)))
+	//	cameras += M
 
-	for(var/mob/living/carbon/necromorph/N in urange(CHUNK_SIZE, locate(x + (CHUNK_SIZE / 2), y + (CHUNK_SIZE / 2), z)))
-		if(N.can_use_marker())
-			cameras += N
+	//for(var/mob/living/carbon/necromorph/N in urange(CHUNK_SIZE, locate(x + (CHUNK_SIZE / 2), y + (CHUNK_SIZE / 2), z)))
+	//	if(N.can_use_marker())
+	//		cameras += N
 
 	for(var/turf/t as anything in block(locate(max(x, 1), max(y, 1), z), locate(min(x + CHUNK_SIZE - 1, world.maxx), min(y + CHUNK_SIZE - 1, world.maxy), z)))
 		turfs[t] = t

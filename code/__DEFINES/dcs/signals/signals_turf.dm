@@ -23,3 +23,6 @@
 
 ///from /datum/element/decal/Detach(): (description, cleanable, directional, mutable_appearance/pic)
 #define COMSIG_TURF_DECAL_DETACHED "turf_decal_detached"
+
+///from base of turf/ChangeTurf(): (flags)
+#define COMSIG_TURF_CHANGED "turf_changed"
