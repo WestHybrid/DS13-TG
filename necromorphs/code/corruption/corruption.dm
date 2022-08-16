@@ -31,6 +31,7 @@
 	if(new_master)
 		set_master(new_master)
 	else
+		//Search for a node if we don't have any
 		for(var/datum/corruption_node/node as anything in SScorruption.nodes)
 			if(node.remaining_weed_amount && IN_GIVEN_RANGE(src, node.parent, node.control_range))
 				set_master(node)
@@ -42,6 +43,7 @@
 
 	atom_integrity = 3
 	SEND_SIGNAL(loc, COMSIG_TURF_NECRO_CORRUPTED, src)
+	//Find turfs near us and check if we can grow there
 	for(var/direction in GLOB.cardinals)
 		var/turf/T = get_step(src, direction)
 		//In case we are in null space/near the map border
@@ -82,6 +84,7 @@
 	SScorruption.decaying += src
 
 /obj/structure/corruption/proc/spread()
+	//We don't remove ourself from SScorruption.spreading because it's handled in on_nearby_turf_corrupted
 	for(var/turf/T as anything in turfs_to_spread)
 		if(T.Enter(src))
 			for(var/datum/corruption_node/node as anything in SScorruption.nodes)
@@ -101,10 +104,12 @@
 				SScorruption.spreading |= src
 	alpha = clamp(255*new_integrity/max_integrity, 20, 215)
 
+//Turf below us is about to change - remove from the list in case it's there
 /obj/structure/corruption/proc/on_turf_change(turf/source)
 	SIGNAL_HANDLER
 	turfs_to_spread -= source
 
+//Turf below us was replaced, check if we can spread
 /obj/structure/corruption/proc/on_turf_changed(turf/source, flags)
 	SIGNAL_HANDLER
 	if(isspaceturf(source) || !istype(source, /turf/open/openspace))
