@@ -30,10 +30,15 @@
 	..()
 
 /mob/living/carbon/necromorph/lurker/Initialize(mapload, marker_master)
-	. += mutable_appearance(icon, "necromorph_tentacle_1")
-	. += mutable_appearance(icon, "necromorph_tentacle_2")
-	. += mutable_appearance(icon, "necromorph_tentacle_3")
-	. = ..()
+	var/static/list/icon/tentacles
+	if(isnull(tentacles))
+		tentacles = list(
+			iconstate2appearance(icon, "necromorph_tentacle_1"),
+			iconstate2appearance(icon, "necromorph_tentacle_2"),
+			iconstate2appearance(icon, "necromorph_tentacle_3"),
+		)
+	add_overlay(tentacles)
+	return ..()
 
 /obj/item/organ/necromorph/lurker/tentacle
 	icon_state = "necromorph_tentacle_1"

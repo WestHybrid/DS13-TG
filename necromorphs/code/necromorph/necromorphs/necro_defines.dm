@@ -20,7 +20,7 @@
 	appearance_flags = KEEP_TOGETHER|TILE_BOUND|PIXEL_SCALE|LONG_GLIDE
 	hud_type = /datum/hud/necromorph
 	hud_possible = list(HEALTH_HUD,STATUS_HUD,ANTAG_HUD,GLAND_HUD)
-	faction = FACTION_NECROMORPH
+	faction = list(FACTION_NECROMORPH)
 	initial_language_holder = /datum/language_holder/necro_talk
 	light_system = MOVABLE_LIGHT
 	type_of_meat = /obj/item/food/meat/slab/human/mutant/necro

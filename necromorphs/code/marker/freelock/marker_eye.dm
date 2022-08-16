@@ -1,6 +1,6 @@
 /mob/camera/marker
 	name = "Marker"
-
+	hud_possible = list(ANTAG_HUD, AI_DETECT_HUD = HUD_LIST_LIST)
 	invisibility = INVISIBILITY_MAXIMUM
 
 	var/list/visibleCameraChunks = list()
