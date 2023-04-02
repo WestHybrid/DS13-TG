@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <base href="../" />
+    <link rel="stylesheet" href="dmdoc.css" />
+    <title>necromorphs&#x2F;PLANNING.md - &#x2F;tg&#x2F; Station 13</title>
+</head>
+<body>
+<header>
+    <a href="index.html">&#x2F;tg&#x2F; Station 13</a> -
+    <a href="index.html#modules">Modules</a> -
+    <a href="index.html#types">Types</a>
+</header>
+<main>
+<h1>necromorphs/PLANNING.md 
+            <a href="https://github.com/WestHybrid/DS13-TG/blob/a186440276a65e50c24147dec9dce0a1d2286fb3/necromorphs/PLANNING.md">
+        <img src="git.png" width="16" height="16" title="necromorphs&#x2F;PLANNING.md"/></a></h1>
+
+<table class="summary" cellspacing="0">
+        <tr><td colspan="2"><h2 id="icons-to-add">ICONS TO ADD</h2>
+<ul>
+<li>CEC Logo</li>
+<li>CEC Paperwork</li>
+<li>NT Logo</li>
+<li>NT Paperwork</li>
+<li>Unitology Logo</li>
+<li>Paperwork</li>
+<li>Marker Symbols.</li>
+<li>Biohazard Lockdown</li>
+<li>Quarantine Lockdown</li>
+<li>Station Alert: Quarantine</li>
+<li>Specimen Tube : Small - Large</li>
+<li>Biotube</li>
+</ul>
+<p>Antagonists</p>
+<ul>
+<li>Unitologist</li>
+<li>Marker</li>
+<li>Necromorph</li>
+<li>AI Marker</li>
+<li>ERT
+<ul>
+<li>SolGov</li>
+<li>Purge Squad</li>
+</ul>
+</li>
+<li>ADD Alarm sounds, sirens, and warning lights that flash.</li>
+</ul>
+<p>#TODO</p>
+<ul>
+<li>
+<p>Finish Single Icon option for Necromorphs</p>
+</li>
+<li>
+<p>Finish Necromorph Outfits</p>
+</li>
+<li>
+<p>Fix the offset of Necromorphs</p>
+</li>
+<li>
+<p>Add necromorph organs and tentacles</p>
+</li>
+<li>
+<p>Add Dismemberment</p>
+<ul>
+<li>Kinesis support to remove limbs</li>
+<li>Necromorphs die if all limbs are removed</li>
+</ul>
+</li>
+<li>
+<p>Biomass Needs its own system all organic objects have biomass</p>
+</li>
+<li>
+<p>Replace /datum/extension with /datum/component</p>
+</li>
+<li>
+<p>Flavor Items</p>
+<ul>
+<li>Newscaster Reports</li>
+<li>Paperwork / Documents</li>
+<li>Logos</li>
+<li>New Clothing</li>
+</ul>
+</li>
+<li>
+<p>Necromorphs</p>
+<ul>
+<li>Abilites Update to Datum Components 
+<ul>
+<li>Actions</li>
+<li>Passives</li>
+</ul>
+</li>
+<li>Sounds
+<ul>
+<li>Ambient Sounds</li>
+<li>Attack Sounds</li>
+</ul>
+</li>
+<li>Wallrun</li>
+<li>Ventcrawling
+<ul>
+<li>Time to make bigger vents ideally with support for people climbing.</li>
+<li>Global Var to Enable people ventcrawling</li>
+<li>Faction Checker to enable vent crawling</li>
+</ul>
+</li>
+<li>Biomass</li>
+<li>Dismemberment
+<ul>
+<li>Death on limb removal </li>
+<li>Splitting support 
+<ul>
+<li>Splitter</li>
+<li>Divider</li>
+</ul>
+</li>
+<li>Kinesis Removal</li>
+</ul>
+</li>
+<li>Link to Master</li>
+<li>Organs
+<ul>
+<li>Tentacles</li>
+</ul>
+</li>
+<li>Sprite
+<ul>
+<li>Icon Offset</li>
+<li>Animations</li>
+<li>Iconstates
+<ul>
+<li>Dead</li>
+<li>Laying</li>
+<li>Mutilated</li>
+<li>Removed Limbs</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Simple Mobs</li>
+</ul>
+</li>
+<li>
+<p>Abilities</p>
+<ul>
+<li>Need to adjust /datum/extensions to /datum/action</li>
+</ul>
+</li>
+</ul>
+<p>The marker has three current locations in this file. There is a variation in mob/dead/observer/freelook/marker
+The other two are stored in code/modules/antagonists
+Need to decide which version we want to utilize. 
+The gamemode is just there to activate the marker and set tracking for necromorphs. The marker should only be able to activate on station z-level and by random chance or by player interaction. </p>
+<ul>
+<li>
+<p>Marker Gamemode (Player Controlled)</p>
+<ul>
+<li>
+<p>Link the Gamemode Marker to the Blob Marker Core, When active, the marker should act as the blob core and continue.  It shouldnt just appear like blob can. It requires the machine/obj form to trigger, the AI Core can have more options. The player controlled should be more of a gamemode then random event. </p>
+<ul>
+<li>On activation whether by the timer, or by admin, it should poll ghost to find someone to be the master. If no master can be found, then it should remain dormant resetting its activation timer. </li>
+<li>Requires spawn points on map creation, whether it can spawn as one of the following
+<ul>
+<li>Lavaland Loot</li>
+<li>Station Storage</li>
+<li>Station Engine</li>
+<li>Cargo Crate</li>
+<li>Shard Spawn</li>
+<li>Construction</li>
+</ul>
+</li>
+<li>Needs to be able to move before activation.
+<ul>
+<li>Once activated it is anchored and can no longer move.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>Marker[Master] (Player)</p>
+<ul>
+<li>
+<p>Need to finalize all marker extra structures</p>
+</li>
+<li>
+<p>Need Necroshop</p>
+<ul>
+<li>Structures</li>
+<li>Upgrades</li>
+<li>Necromorph Spawning</li>
+</ul>
+</li>
+<li>
+<p>Needs abilities</p>
+</li>
+<li>
+<p>Needs Signals</p>
+</li>
+<li>
+<p>Blob Code</p>
+<ul>
+<li>Needs to be refactored specifically for Necromorph Master</li>
+<li>Remove all prior reference to blob.</li>
+<li>Biomass generation </li>
+</ul>
+</li>
+<li>
+<p>Engine Variation Status</p>
+<ul>
+<li>Containment</li>
+<li>Power Generation</li>
+<li>Required
+<ul>
+<li>R&amp;D
+<ul>
+<li>Can operate the activation and management tools.</li>
+</ul>
+</li>
+<li>Engineering
+<ul>
+<li>Can build the containment system.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Causes hallucinations.</li>
+</ul>
+</li>
+<li>
+<p>Admin Controls</p>
+<ul>
+<li>Activate</li>
+<li>Deactivate</li>
+<li>Toggle Activation Timer</li>
+<li>Set Timer
+<ul>
+<li>Adjust Timer</li>
+</ul>
+</li>
+<li>Change Biomass</li>
+<li>Max number of Necromorphs</li>
+</ul>
+</li>
+<li>
+<p>Refactor / Remove</p>
+<ul>
+<li>Remove all reference to multiple blob strains and blobs from the marker. The marker does not need the functionality of blobstrains nor does it need that hard coded it. The controller should act regardless of any future variations of the marker.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>Corruption / Growth</p>
+<ul>
+<li>Mechanics
+<ul>
+<li>Movement Slowdown</li>
+<li>Necromorph Spawn points</li>
+</ul>
+</li>
+<li>Sprites
+<ul>
+<li>Need to add animation to the sprite. </li>
+<li>Need damaged states.</li>
+<li>Needs Edge state overlay.</li>
+<li>Needs wall state overlay</li>
+<li>Need vent, door overlay.</li>
+<li>Need to add slow opacity forming</li>
+<li>Need to add early stage vine- like growth</li>
+</ul>
+</li>
+<li>Sounds
+<ul>
+<li>Growth Sounds</li>
+</ul>
+</li>
+<li>Statistics
+<ul>
+<li>Growth Tracking</li>
+<li>Structure Tracking</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>Marker (AI)</p>
+<ul>
+<li>Need to finalize all marker extra structures</li>
+<li>Create Marker shard version, that can trigger a minor outbreak similar to the blob core setup now. </li>
+</ul>
+</li>
+<li>
+<p>SPRITES</p>
+<ul>
+<li>
+<p>MOBS</p>
+<ul>
+<li>NECROMORPHS
+<ul>
+<li>Brute
+<ul>
+<li>Needs individual limbs</li>
+<li></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>STRUCTURES</p>
+<ul>
+<li>MARKER</li>
+<li>CORRUPTION
+<ul>
+<li>Growth (Animated)
+<ul>
+<li>Wall</li>
+<li>Door</li>
+<li>Vent</li>
+<li>Variants
+<ul>
+<li>Heavy Growth</li>
+<li>Normal Growth</li>
+<li>Light Growth</li>
+<li>Seeding</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>OBJECTS</p>
+</li>
+<li>
+<p>ITEMS</p>
+</li>
+<li>
+<p>EFFECTS</p>
+</li>
+</ul>
+</li>
+</ul></td></tr></table></main>
+<footer>
+    tgstation.dme
+    <a href="https://github.com/WestHybrid/DS13-TG/tree/a186440276a65e50c24147dec9dce0a1d2286fb3">a186440</a>
+        (master) &mdash; <a href="https://github.com/SpaceManiac/SpacemanDMM/blob/master/src/dmdoc/README.md">dmdoc 1.4.1</a></footer>
+</body>
+</html>

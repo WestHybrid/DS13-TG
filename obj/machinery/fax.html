@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <base href="../../" />
+    <link rel="stylesheet" href="dmdoc.css" />
+    <title>&#x2F;obj&#x2F;machinery&#x2F;fax - &#x2F;tg&#x2F; Station 13</title>
+</head>
+<body>
+<header>
+    <a href="index.html">&#x2F;tg&#x2F; Station 13</a> -
+    <a href="index.html#modules">Modules</a> -
+    <a href="index.html#types">Types</a>
+ &mdash; <a href="obj/machinery/fax.html#var">Var Details</a> - <a href="obj/machinery/fax.html#proc">Proc Details</a></header>
+<main>
+<h1>fax <aside>/<a href="obj.html">obj</a>/<a href="obj/machinery.html">machinery</a>/<a href="obj/machinery/fax.html">fax</a></aside>
+        
+    
+            <a href="https://github.com/WestHybrid/DS13-TG/blob/a186440276a65e50c24147dec9dce0a1d2286fb3/code/modules/paperwork/fax.dm#L1">
+        <img src="git.png" width="16" height="16" title="code&#x2F;modules&#x2F;paperwork&#x2F;fax.dm 1"/></a></h1>
+
+<table class="summary" cellspacing="0"><tr><td colspan="2"><h2>Vars</h2></td></tr>
+            <tr><th><a href="obj/machinery/fax.html#var/fax_history">fax_history</a></th><td>This is where the dispatch and reception history for each fax is stored.</td></tr>
+            <tr><th><a href="obj/machinery/fax.html#var/fax_id">fax_id</a></th><td>The unique ID by which the fax will build a list of existing faxes.</td></tr>
+            <tr><th><a href="obj/machinery/fax.html#var/fax_name">fax_name</a></th><td>The name of the fax displayed in the list. Not necessarily unique to some EMAG jokes.</td></tr>
+            <tr><th><a href="obj/machinery/fax.html#var/paper_contain">paper_contain</a></th><td>A reference to an <code>/obj/item/paper</code> inside the copier, if one is inserted. Otherwise null.</td></tr>
+            <tr><th><a href="obj/machinery/fax.html#var/syndicate_network">syndicate_network</a></th><td>Necessary to hide syndicate faxes from the general list. Doesn't mean he's EMAGGED!</td></tr><tr><td colspan="2"><h2>Procs</h2></td></tr>
+            <tr><th><a href="obj/machinery/fax.html#proc/fax_name_exist">fax_name_exist</a></th><td>Checks fax names for a match.</td></tr>
+            <tr><th><a href="obj/machinery/fax.html#proc/history_add">history_add</a></th><td>A procedure that makes entries in the history of fax transactions.</td></tr>
+            <tr><th><a href="obj/machinery/fax.html#proc/receive">receive</a></th><td>Procedure for accepting papers from another fax machine.</td></tr>
+            <tr><th><a href="obj/machinery/fax.html#proc/send">send</a></th><td>The procedure for sending a paper to another fax machine.</td></tr></table>
+    <h2 id="var">Var Details</h2><h3 id="var/fax_history"><aside class="declaration">var </aside>fax_history
+            <aside>&ndash; /list</aside>
+        
+    
+            <a href="https://github.com/WestHybrid/DS13-TG/blob/a186440276a65e50c24147dec9dce0a1d2286fb3/code/modules/paperwork/fax.dm#L20">
+        <img src="git.png" width="16" height="16" title="code&#x2F;modules&#x2F;paperwork&#x2F;fax.dm 20"/></a></h3>
+        <p>This is where the dispatch and reception history for each fax is stored.</p><h3 id="var/fax_id"><aside class="declaration">var </aside>fax_id
+            <aside>&ndash; </aside>
+        
+    
+            <a href="https://github.com/WestHybrid/DS13-TG/blob/a186440276a65e50c24147dec9dce0a1d2286fb3/code/modules/paperwork/fax.dm#L12">
+        <img src="git.png" width="16" height="16" title="code&#x2F;modules&#x2F;paperwork&#x2F;fax.dm 12"/></a></h3>
+        <p>The unique ID by which the fax will build a list of existing faxes.</p><h3 id="var/fax_name"><aside class="declaration">var </aside>fax_name
+            <aside>&ndash; </aside>
+        
+    
+            <a href="https://github.com/WestHybrid/DS13-TG/blob/a186440276a65e50c24147dec9dce0a1d2286fb3/code/modules/paperwork/fax.dm#L14">
+        <img src="git.png" width="16" height="16" title="code&#x2F;modules&#x2F;paperwork&#x2F;fax.dm 14"/></a></h3>
+        <p>The name of the fax displayed in the list. Not necessarily unique to some EMAG jokes.</p><h3 id="var/paper_contain"><aside class="declaration">var </aside>paper_contain
+            <aside>&ndash; /<a href="obj.html">obj</a>/<a href="obj/item.html">item</a>/<a href="obj/item/paper.html">paper</a></aside>
+        
+    
+            <a href="https://github.com/WestHybrid/DS13-TG/blob/a186440276a65e50c24147dec9dce0a1d2286fb3/code/modules/paperwork/fax.dm#L16">
+        <img src="git.png" width="16" height="16" title="code&#x2F;modules&#x2F;paperwork&#x2F;fax.dm 16"/></a></h3>
+        <p>A reference to an <code>/obj/item/paper</code> inside the copier, if one is inserted. Otherwise null.</p><h3 id="var/syndicate_network"><aside class="declaration">var </aside>syndicate_network
+            <aside>&ndash; </aside>
+        
+    
+            <a href="https://github.com/WestHybrid/DS13-TG/blob/a186440276a65e50c24147dec9dce0a1d2286fb3/code/modules/paperwork/fax.dm#L18">
+        <img src="git.png" width="16" height="16" title="code&#x2F;modules&#x2F;paperwork&#x2F;fax.dm 18"/></a></h3>
+        <p>Necessary to hide syndicate faxes from the general list. Doesn't mean he's EMAGGED!</p><h2 id="proc">Proc Details</h2><h3 id="proc/fax_name_exist"><aside class="declaration">proc </aside>fax_name_exist<aside>(new_fax_name) 
+        
+    
+            <a href="https://github.com/WestHybrid/DS13-TG/blob/a186440276a65e50c24147dec9dce0a1d2286fb3/code/modules/paperwork/fax.dm#L189">
+        <img src="git.png" width="16" height="16" title="code&#x2F;modules&#x2F;paperwork&#x2F;fax.dm 189"/></a></aside>
+        </h3>
+        <p>Checks fax names for a match.</p>
+<p>Called to check the new fax name against the names of other faxes to prevent the use of identical names.
+Arguments:</p>
+<ul>
+<li>new_fax_name - The text of the name to be checked for a match.</li>
+</ul><h3 id="proc/history_add"><aside class="declaration">proc </aside>history_add<aside>(history_type, history_fax_name) 
+        
+    
+            <a href="https://github.com/WestHybrid/DS13-TG/blob/a186440276a65e50c24147dec9dce0a1d2286fb3/code/modules/paperwork/fax.dm#L171">
+        <img src="git.png" width="16" height="16" title="code&#x2F;modules&#x2F;paperwork&#x2F;fax.dm 171"/></a></aside>
+        </h3>
+        <p>A procedure that makes entries in the history of fax transactions.</p>
+<p>Called to record the operation in the fax history list.
+Records the type of operation, the name of the fax machine with which the operation was performed, and the station time.
+Arguments:</p>
+<ul>
+<li>history_type - Type of operation. By default, &quot;Send&quot; and &quot;Receive&quot; should be used.</li>
+<li>history_fax_name - The name of the fax machine that performed the operation.</li>
+</ul><h3 id="proc/receive"><aside class="declaration">proc </aside>receive<aside>(/<a href="obj.html">obj</a>/<a href="obj/item.html">item</a>/<a href="obj/item/paper.html">paper</a>/paper, sender_name) 
+        
+    
+            <a href="https://github.com/WestHybrid/DS13-TG/blob/a186440276a65e50c24147dec9dce0a1d2286fb3/code/modules/paperwork/fax.dm#L155">
+        <img src="git.png" width="16" height="16" title="code&#x2F;modules&#x2F;paperwork&#x2F;fax.dm 155"/></a></aside>
+        </h3>
+        <p>Procedure for accepting papers from another fax machine.</p>
+<p>The procedure is called in proc/send() of the other fax. It receives a paper object and &quot;prints&quot; it.
+Arguments:</p>
+<ul>
+<li>paper - The object of the paper to be printed.</li>
+<li>sender_name - The sender's name, which will be displayed in the message and recorded in the history of operations.</li>
+</ul><h3 id="proc/send"><aside class="declaration">proc </aside>send<aside>(/<a href="obj.html">obj</a>/<a href="obj/item.html">item</a>/<a href="obj/item/paper.html">paper</a>/paper, id) 
+        
+    
+            <a href="https://github.com/WestHybrid/DS13-TG/blob/a186440276a65e50c24147dec9dce0a1d2286fb3/code/modules/paperwork/fax.dm#L137">
+        <img src="git.png" width="16" height="16" title="code&#x2F;modules&#x2F;paperwork&#x2F;fax.dm 137"/></a></aside>
+        </h3>
+        <p>The procedure for sending a paper to another fax machine.</p>
+<p>The object is called inside /obj/machinery/fax to send the paper to another fax machine.
+The procedure searches among all faxes for the desired fax ID and calls proc/receive() on that fax.
+If the paper is sent successfully, it returns TRUE.
+Arguments:</p>
+<ul>
+<li>paper - The object of the paper to be sent.</li>
+<li>id - The network ID of the fax machine you want to send the paper to.</li>
+</ul></main>
+<footer>
+    tgstation.dme
+    <a href="https://github.com/WestHybrid/DS13-TG/tree/a186440276a65e50c24147dec9dce0a1d2286fb3">a186440</a>
+        (master) &mdash; <a href="https://github.com/SpaceManiac/SpacemanDMM/blob/master/src/dmdoc/README.md">dmdoc 1.4.1</a></footer>
+</body>
+</html>
